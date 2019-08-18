@@ -5,12 +5,14 @@ using UnityEngine;
 
 public class Mobile : SelectableObject
 {    
+    /// <summary> Физический компонент. </summary>
     public Rigidbody rigitBody;
-    
+    /// <summary> Модуль двигателей. </summary>
     public EngineModule moveComponent;
-    
+    /// <summary> Другие модули. </summary>
     public Module[] Modules;
-    // Start is called before the first frame update
+    
+    /// <summary> Инициализация двигателей. </summary>
     public override void Awake()
     {
         base.Awake();
@@ -21,7 +23,7 @@ public class Mobile : SelectableObject
         moveComponent = gameObject.AddComponent<EngineModule>();
     }
 
-    // Update is called once per frame
+    /// <summary> Включение модулей. </summary>
     public override void Update()
     {
         base.Update();

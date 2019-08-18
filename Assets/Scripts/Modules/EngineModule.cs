@@ -7,6 +7,7 @@ using Vector3 = UnityEngine.Vector3;
 [RequireComponent(typeof(Rigidbody))]
 public class EngineModule : MonoBehaviour
 {
+    /// <summary> Двигается ли корабль. </summary>
     public bool Moving;
     
     /// <summary> Допустимая ошибка. </summary>
@@ -14,7 +15,6 @@ public class EngineModule : MonoBehaviour
     
     /// <summary> Коэффициент крена </summary>
     protected const float RollSpeed = 0.05f;
-    
     
     [Tooltip("Объект к которому надо лететь")]
     public Vector3 Target;
@@ -214,17 +214,18 @@ public class EngineModule : MonoBehaviour
                                                         Quaternion.Euler(0, 0, rollAngle),
                                                         RollSpeed);
     }
+
     private void Awake()
     {
         Target = transform.position;
     }
-
+    /// <summary> Начало движения в определённую точку. </summary>
     public void Move(Vector3 target)
     {
         Target = target;
         Moving = true;
     }
-
+    /// <summary> Остановка. </summary>
     public void Stop()
     {
         if (Moving)

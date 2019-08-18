@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class KliBuilder : ShipType1
 {
-    // Start is called before the first frame update
+    /// <summary> Добавление подсистем, щитов и других параметров судна. </summary>
     public override void Awake()
     {
         base.Awake();

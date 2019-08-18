@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Static : SelectableObject
 {
+    /// <summary> Модули, присутствующие на объекте. </summary>
     public Module[] Modules;
     // Start is called before the first frame update
     void Start()
@@ -12,6 +13,7 @@ public class Static : SelectableObject
     }
 
     // Update is called once per frame
+    /// <summary> Включение модулей в работу. </summary>
     void Update()
     {
         foreach (var _module in Modules)

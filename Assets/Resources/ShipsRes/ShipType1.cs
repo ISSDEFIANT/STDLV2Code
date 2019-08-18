@@ -5,10 +5,12 @@ using System.Linq;
 
 public class ShipType1 : Mobile
 {
+    /// <summary> Объект, на который будут установлены подсистемы. </summary>
     protected GameObject subModulesObj;
-    
+    /// <summary> Объект, на который будут установлены компоненты щитов. </summary>
     protected GameObject ShildsObj;
-    // Start is called before the first frame update
+    
+    /// <summary> Инициализация системы жизней, и объектов для подсистем и щитов </summary>
     public override void Awake()
     {
         base.Awake();
@@ -34,6 +36,7 @@ public class ShipType1 : Mobile
         base.Update();
     }
 
+    /// <summary> Инициализация щитов. </summary>
     protected void initShilds(int count, GameObject ShildObject, HealthSystem _hs, float shildForce, float shieldDelay, float shieldDivider)
     {
         _hs.Shilds = Enumerable.Range(0,count).Select(x=>ShildObject.AddComponent<NormalRaceShield>().InitShield(shieldDelay,shieldDivider,shildForce)).ToArray();
