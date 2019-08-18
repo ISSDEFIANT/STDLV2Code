@@ -1,0 +1,219 @@
+fileFormatVersion: 2
+guid: 009a42e61ba97ba4a93a8e33e28c3583
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: A
+    100002: B
+    100004: C
+    100006: EffectDown
+    100008: EffectTop
+    100010: EffectTopWC
+    100012: Light 1
+    100014: Light 10
+    100016: Light 2
+    100018: Light 3
+    100020: Light 4
+    100022: Light 5
+    100024: Light 6
+    100026: Light 7
+    100028: Light 8
+    100030: Light 9
+    100032: Object001
+    100034: Object002
+    100036: Object003
+    100038: Object004
+    100040: //RootNode
+    100042: uppersect0
+    100044: uppersecti
+    100046: WarpNessel
+    100048: WarpNessel 1
+    400000: A
+    400002: B
+    400004: C
+    400006: EffectDown
+    400008: EffectTop
+    400010: EffectTopWC
+    400012: Light 1
+    400014: Light 10
+    400016: Light 2
+    400018: Light 3
+    400020: Light 4
+    400022: Light 5
+    400024: Light 6
+    400026: Light 7
+    400028: Light 8
+    400030: Light 9
+    400032: Object001
+    400034: Object002
+    400036: Object003
+    400038: Object004
+    400040: //RootNode
+    400042: uppersect0
+    400044: uppersecti
+    400046: WarpNessel
+    400048: WarpNessel 1
+    2100000: 'Material #55'
+    2100002: 07 - Default
+    2100004: 'Material #54'
+    2100006: 'Material #50'
+    2100008: 'Material #47'
+    2100010: 'Material #49'
+    2100012: 'Material #48'
+    2100014: 'Material #42'
+    2100016: 'Material #37'
+    2100018: 'Material #36'
+    2300000: A
+    2300002: B
+    2300004: EffectDown
+    2300006: EffectTop
+    2300008: EffectTopWC
+    2300010: Light 1
+    2300012: Light 10
+    2300014: Light 2
+    2300016: Light 3
+    2300018: Light 4
+    2300020: Light 5
+    2300022: Light 6
+    2300024: Light 7
+    2300026: Light 8
+    2300028: Light 9
+    2300030: Object001
+    2300032: Object002
+    2300034: Object003
+    2300036: Object004
+    2300038: uppersect0
+    2300040: uppersecti
+    2300042: WarpNessel 1
+    3300000: A
+    3300002: B
+    3300004: EffectDown
+    3300006: EffectTop
+    3300008: EffectTopWC
+    3300010: Light 1
+    3300012: Light 10
+    3300014: Light 2
+    3300016: Light 3
+    3300018: Light 4
+    3300020: Light 5
+    3300022: Light 6
+    3300024: Light 7
+    3300026: Light 8
+    3300028: Light 9
+    3300030: Object001
+    3300032: Object002
+    3300034: Object003
+    3300036: Object004
+    3300038: uppersect0
+    3300040: uppersecti
+    3300042: WarpNessel 1
+    4300000: B
+    4300002: Light 2
+    4300004: Light 3
+    4300006: Light 4
+    4300008: EffectDown
+    4300010: A
+    4300012: Light 1
+    4300014: Object001
+    4300016: Object002
+    4300018: Object003
+    4300020: Object004
+    4300022: WarpNessel
+    4300024: Light 9
+    4300026: Light 10
+    4300028: EffectTop
+    4300030: uppersect0
+    4300032: Light 6
+    4300034: Light 7
+    4300036: uppersecti
+    4300038: Light 5
+    4300040: Light 8
+    4300042: EffectTopWC
+    7400000: Take 001
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.002
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
