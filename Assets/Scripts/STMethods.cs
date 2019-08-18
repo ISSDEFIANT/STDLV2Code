@@ -7,6 +7,8 @@ using Debug = UnityEngine.Debug;
 
 public static class STMethods
 {
+    /// <summary> Тревоги. </summary>
+
     public enum Alerts
     {
         RedAlert,
@@ -14,6 +16,8 @@ public static class STMethods
         GreenAlert
         
     }
+    
+    /// <summary> Наведение на определённые системы. </summary>
     public enum AttackType
     {
         NormalAttack,
@@ -28,11 +32,15 @@ public static class STMethods
         TractorBeamSystemAttack
     }
 
+    /// <summary> Тип проигрывания движения по рельсе. </summary>
+
     public enum RailPlaymode
     {
         Linear,
         Catmull
     }
+
+    /// <summary> Обнаружение ближайшей объекта из списка. </summary>
 
     public static Transform NearestTransform(Transform[] transformList, Transform target)
     {
@@ -41,7 +49,7 @@ public static class STMethods
 
         foreach (Transform all in transformList)
         {
-            float distence = Vector3.Distance(all.position, target.position);//(all.position - target.position).sqrMagnitude;
+            float distence = Vector3.Distance(all.position, target.position);
 
             if (distence < nearest)
             {
@@ -52,7 +60,8 @@ public static class STMethods
 
         return closest;
     }
-
+    
+    /// <summary> Обнаружение номера ближайшего объекта из списка. </summary>
     public static int NearestTransformInt(Transform[] list, Transform target)
     {
         float nearest = Mathf.Infinity;
@@ -69,6 +78,7 @@ public static class STMethods
         return num;
     }
     
+    /// <summary> Найти в листе (GameObject). </summary>
     public static bool FindInList(GameObject obj, List<GameObject> list)
     {
         foreach (GameObject selObj in list)
@@ -78,6 +88,7 @@ public static class STMethods
         }
         return false;
     }
+    /// <summary> Найти в листе (AudioClip). </summary>
     public static bool FindInList(AudioClip obj, List<AudioClip> list)
     {
         foreach (AudioClip selObj in list)
@@ -91,13 +102,19 @@ public static class STMethods
 [System.Serializable]
 public class FireDegreesLockSystem
 {
+    /// <summary> Инверсировать X. </summary>
     public bool InvertX;
 
+    /// <summary> Минимальный X. </summary>
     public float MinX;
+    /// <summary> Максимальный X. </summary>
     public float MaxX;
-
+    
+    /// <summary> Инверсировать Y. </summary>
     public bool InvertY;
 
+    /// <summary> Минимальный Y. </summary>
     public float MinY;
+    /// <summary> Максимальный Y. </summary>
     public float MaxY;
 } 

@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class NormalRaceShield : SubSystem
 {
+    /// <summary> Время полной перезагрузки щитов. </summary>
     public float Delay = 180;
-
+    /// <summary> Делитель для дозарядки щита. </summary>
     public float RechargeDivider = 100;
     // Start is called before the first frame update
     void Start()
@@ -13,7 +14,7 @@ public class NormalRaceShield : SubSystem
         
     }
     
-    // Update is called once per frame
+    /// <summary> Основная механика перезарядки и дозарядки щита. </summary>
     void Update()
     {
         if (SubSystemCurHealth > SubSystemMaxHealth / 8)
@@ -40,6 +41,7 @@ public class NormalRaceShield : SubSystem
             }
         }
     }
+    /// <summary> Инициализация щита. </summary>
     public SubSystem InitShield(float _delay, float _rechargeDivider, float Health)
     {
         SubSystemMaxHealth = Health;

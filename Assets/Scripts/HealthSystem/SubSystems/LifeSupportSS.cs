@@ -10,7 +10,7 @@ public class LifeSupportSS : SubSystem
 
     }
 
-    // Update is called once per frame
+    /// <summary> Проверка работоспособности системы. </summary>
     public override void Update()
     {
         base.Update();
@@ -19,7 +19,7 @@ public class LifeSupportSS : SubSystem
             DeActive();
         }
     }
-
+    /// <summary> В случае отказа системы. </summary>
     public void DeActive()
     {
         if (healthSystem.curCrew > healthSystem.MaxCrew / 100)

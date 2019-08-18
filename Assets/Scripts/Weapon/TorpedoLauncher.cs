@@ -5,33 +5,47 @@ using UnityEngine;
 
 public class TorpedoLauncher : MonoBehaviour
 {
+    /// <summary> Орудийная система. </summary>
     public WeaponModule WeaponSystem;
+    /// <summary> Подсистема, влияющая на орудие. </summary>
     public SubSystem NecessarySystem;
-
+    
+    /// <summary> Торпеда (снаряд). </summary>
     public GameObject shell;
 
+    /// <summary> Время до активации коллизии. </summary>
     public float collisionDelay;
 
+    /// <summary> Максимальное количество торпед (снарядов). </summary>
     public int maxTorpidos;
+    /// <summary> Текущее количество торпед (снарядов). </summary>
     [HideInInspector] public int curTorpidos;
 
+    /// <summary> Задержка между выстрелами. </summary>
     public float TorpedoRange = 1;
+    /// <summary> Текущая задержка. </summary>
     [HideInInspector] public float curTorpedoRange = 0;
 
+    /// <summary> Время перезарядки залпа. </summary>
     public float ReloadTime;
+    /// <summary> Текущее время перезарядки залпа. </summary>
     [HideInInspector] public float curReloadTime;
 
+    /// <summary> Блокировка орудий в градусной системе. </summary>
     public FireDegreesLockSystem DegreesLocking;
 
+    /// <summary> Цель. </summary>
     public SelectableObject Target;
 
+    /// <summary> Торпеды (снаряды). </summary>
     public GameObject[] AllTorpedose;
+    /// <summary> Количество торпед (снарядов). </summary>
     private int poolSize;
 
+    /// <summary> Производится ли перезарядка. </summary>
     private bool Reloading;
 
-    // Start is called before the first frame update
-
+    /// <summary> Орудие активно. </summary>
     public void Active()
     {
         if (NecessarySystem != null)
@@ -65,7 +79,7 @@ public class TorpedoLauncher : MonoBehaviour
             }
         }
     }
-
+    /// <summary> Выбор цели. </summary>
     void TargetSelecting()
     {
         if (WeaponSystem.MainTarget != null)
@@ -141,7 +155,7 @@ public class TorpedoLauncher : MonoBehaviour
             }
         }
     }
-
+    /// <summary> Разворот на цель. </summary>
     void RotateOnTarget(Transform target)
     {
         if (target != null)
@@ -152,7 +166,7 @@ public class TorpedoLauncher : MonoBehaviour
 
         }
     }
-
+    /// <summary> Видит ли цель. </summary>
     bool SeeTarget(Transform target)
     {
         RotateOnTarget(target);
@@ -205,7 +219,7 @@ public class TorpedoLauncher : MonoBehaviour
 
         return false;
     }
-
+    /// <summary> Процесс атаки. </summary>
     void Attacking()
     {
         if (curTorpidos > 0)
@@ -240,7 +254,7 @@ public class TorpedoLauncher : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /// <summary> Создание торпед (снарядов). </summary>
     void Awake()
     {
         curTorpidos = maxTorpidos;
@@ -254,7 +268,7 @@ public class TorpedoLauncher : MonoBehaviour
             AllTorpedose[i].SetActive(false);
         }
     }
-
+    /// <summary> Активация торпед (снарядов). </summary>
     public void InstantiateAlternative()
     {
         for (int i = 0; i < poolSize; i++)
@@ -273,7 +287,7 @@ public class TorpedoLauncher : MonoBehaviour
             }
         }
     }
-
+/// <summary> Уничтожение торпед (снарядов) вместе с орудийной системой. </summary>
     private void OnDestroy()
     {
         foreach (GameObject _t in AllTorpedose)

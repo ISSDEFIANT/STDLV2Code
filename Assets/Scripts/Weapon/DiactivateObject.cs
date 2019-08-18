@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DiactivateObject : MonoBehaviour {
+	/// <summary> Время жизни. </summary>
 	public float LifeTime;
+	/// <summary> Текущее время жизни. </summary>
 	private float timer;
-	// Use this for initialization
+	/// <summary> Первая установка текущего времени. </summary>
 	void Start () {
 		timer = LifeTime;
 	}
 	
-	// Update is called once per frame
+	/// <summary> Работа таймера до отключения. </summary>
 	void Update () {
 		if (timer >= 0) {
 			timer -= Time.deltaTime;
@@ -20,6 +22,7 @@ public class DiactivateObject : MonoBehaviour {
 			timer = LifeTime;
 		}
 	}
+	/// <summary> Отключение. </summary>
 	public void Diactivate(){
 		gameObject.SetActive (false);
 		transform.position = Vector3.zero;

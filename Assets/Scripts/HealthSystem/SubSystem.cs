@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class SubSystem : MonoBehaviour
 {
+    /// <summary> Система жизней. </summary>
     public HealthSystem healthSystem;
     
-    public float SubSystemMaxHealth;
+    /// <summary> Максимальная жизнь подсистемы. </summary>
+    public float SubSystemMaxHealth; 
+    /// <summary> Текущая жизнь подсистемы. </summary>
     public float SubSystemCurHealth;
-    
+    /// <summary> Эффективность подсистемы. </summary>
     public float efficiency;
     // Start is called before the first frame update
     
@@ -17,7 +20,7 @@ public class SubSystem : MonoBehaviour
         
     }
 
-    // Update is called once per frame
+    /// <summary> Основная механика подсистемы. </summary>
     public virtual void Update()
     {
         ChangeEfficiency();
@@ -29,6 +32,7 @@ public class SubSystem : MonoBehaviour
             RegenerateSystem();
         }
     }
+    /// <summary> Полевой ремонт подсистемы. </summary>
     private void RegenerateSystem()
     {
         if (SubSystemCurHealth < SubSystemMaxHealth)
@@ -40,6 +44,7 @@ public class SubSystem : MonoBehaviour
             SubSystemCurHealth = SubSystemMaxHealth;
         }
     }
+    /// <summary> Изменение эффективности. </summary>
     void ChangeEfficiency()
     {
         efficiency = SubSystemCurHealth / SubSystemMaxHealth;
@@ -48,7 +53,7 @@ public class SubSystem : MonoBehaviour
             efficiency = 0;
         }
     }
-
+    /// <summary> Инициализация жизни подсистемы. </summary>
     public SubSystem InitSystemHealth(float Health)
     {
         SubSystemMaxHealth = Health;

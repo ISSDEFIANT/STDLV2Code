@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WarpCoreSS : SubSystem
 {
+    /// <summary> Вспышка взрыва варп ядра. </summary>
     public GameObject WarpCoreExplosion;
     // Start is called before the first frame update
     void Start()
@@ -11,7 +12,7 @@ public class WarpCoreSS : SubSystem
         
     }
 
-    // Update is called once per frame
+    /// <summary> Проверка работоспособности системы. </summary>
     public override void Update()
     {
         base.Update();
@@ -20,6 +21,7 @@ public class WarpCoreSS : SubSystem
             DeActive();
         }
     }
+    /// <summary> Взрыв ядра. </summary>
     public void DeActive()
     {
         Instantiate(WarpCoreExplosion, transform.position, Quaternion.identity);

@@ -4,23 +4,28 @@ using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
 {
+    /// <summary> Максимальная целостность корпуса. </summary>
     public float MaxHull;
+    /// <summary> Текущая целостность корпуса. </summary>
     public float curHull;
 
+    /// <summary> Максимальный экипаж. </summary>
     public float MaxCrew;
+    /// <summary> Текущий экипаж. </summary>
     public float curCrew;
 
+    /// <summary> Щиты. </summary>
     public SubSystem[] Shilds;
-
+    /// <summary> Подсистемы. </summary>
     public SubSystem[] SubSystems;
-
+    /// <summary> Таймер от разрушения корпуса до взрыва. </summary>
     protected float Timer = 3;
-
+    /// <summary> Взрыв. </summary>
     public GameObject ExplosionEffect;
-
+    /// <summary> Эфффект щитов. </summary>
     private GameObject ShieldEffect;
     
-    // Start is called before the first frame update
+    /// <summary> Настройка подсистем и щитов. </summary>
     void Start()
     {
         Timer = Random.Range(3, 7);
@@ -43,7 +48,7 @@ public class HealthSystem : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /// <summary> Работа таймера в случае разрушения судна. </summary>
     void Update()
     {
         if (curHull <= 0)
@@ -58,7 +63,7 @@ public class HealthSystem : MonoBehaviour
             }
         }
     }
-
+    /// <summary> Применение урона к объекту. </summary>
     public void ApplyDamage(float damage, STMethods.AttackType aiming, Vector3 attackVector)
     {
         if (Shilds.Length > 0)
@@ -108,13 +113,13 @@ public class HealthSystem : MonoBehaviour
             }
         }
     }
-
+    /// <summary> Уничтожение объекта. </summary>
     public void DestroyObject()
     {
         Instantiate(ExplosionEffect, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
-
+    /// <summary> Урон по экипажу. </summary>
     public void CrewDamage(float damage)
     {
         if (curCrew-damage > 0)
@@ -126,7 +131,7 @@ public class HealthSystem : MonoBehaviour
             curCrew = 0;
         }
     }
-
+    /// <summary> Инициализация корпуса и экипажа. </summary>
     public void InitHullAndCrew(float Hull, int Crew)
     {
         MaxHull = Hull;
@@ -134,7 +139,7 @@ public class HealthSystem : MonoBehaviour
         MaxCrew = Crew;
         curCrew = Crew;
     }
-
+    /// <summary> Применение урона к подсистемам. </summary>
     void ApplyHullAndSubSystemDamage(float damage, STMethods.AttackType aiming)
     {
         switch (aiming)

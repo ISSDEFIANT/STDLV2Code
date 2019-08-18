@@ -5,7 +5,7 @@ using Utils;
 
 public class Module : MonoBehaviour
 {
-    // Start is called before the first frame update
+    /// <summary> Когда модуль активируется. </summary>
     public virtual void Active(){}
     void Start()
     {

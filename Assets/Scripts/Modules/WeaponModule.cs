@@ -5,16 +5,23 @@ using UnityEngine;
 
 public class WeaponModule : Module
 {
+    /// <summary> Радиус орудий. </summary>
     public float WeaponRange;
-
+    /// <summary> Тревога. </summary>
     public STMethods.Alerts Alerts;
+    /// <summary> Наведение орудий. </summary>
     public STMethods.AttackType Aiming;
-    
+    /// <summary> Все цели, доступные для стрельбы. </summary>
     public List<SelectableObject> Targets;
+    /// <summary> Главная цель для стрельбы. </summary>
     public SelectableObject MainTarget;
 
+    /// <summary> Лучевые орудия. </summary>
     public List<BeamWeapon> BeamWeapons;
+    /// <summary> Торпедные и дисраптерные установки. </summary>
     public List<TorpedoLauncher> Launchers;
+    
+    /// <summary> Механика системы в рабочем состоянии. </summary>
     public override void Active()
     {
         if (MainTarget != null)
@@ -53,7 +60,7 @@ public class WeaponModule : Module
             }
         }
     }
-    // Start is called before the first frame update
+    /// <summary> Инициализация листа целей. </summary>
     void Awake()
     {
         Targets = new List<SelectableObject>();

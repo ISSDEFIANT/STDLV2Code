@@ -5,34 +5,48 @@ using UnityEngine;
 
 public class BeamWeapon : MonoBehaviour
 {
+    /// <summary> Орудийная система. </summary>
     public WeaponModule WeaponSystem;
+    /// <summary> Подсистема, влияющая на орудие. </summary>
     public SubSystem NecessarySystem;
 
+    /// <summary> Является ли дугой. </summary>
     public bool Arc;
+    /// <summary> Путь дуги. </summary>
     public Rail ArcRail;
+    /// <summary> Карретка 1. </summary>
     public Mover L1;
+    /// <summary> Карретка 2. </summary>
     public Mover L2;
+    /// <summary> Свечение в основении луча. </summary>
     public GameObject BeamLight;
-    private int AttackPoint;
 
+    /// <summary> Дуга заряжается. </summary>
     public bool ChargeringArc;
 
+    /// <summary> Время перезарядки. </summary>
     public float ReloadTime;
+    /// <summary> Текущее время перезарядки. </summary>
     [HideInInspector] public float curReloadTime;
-
+    /// <summary> Время огня. </summary>
     public float FireTime;
+    /// <summary> Текущее время огня. </summary>
     [HideInInspector] public float curFireTime;
-
+    /// <summary> Урон. </summary>
     public float Damage;
+    /// <summary> Текущий урон. </summary>
     [HideInInspector] public float curDamage;
 
+    /// <summary> Блокировка орудий в градусной системе. </summary>
     public FireDegreesLockSystem DegreesLocking;
 
+    /// <summary> Цель. </summary>
     public SelectableObject Target;
 
+    /// <summary> Система запуска луча. </summary>
     private ArcReactor_Launcher _arl;
 
-    // Start is called before the first frame update
+    /// <summary> Нахождение системы запуска луча. </summary>
     void Start()
     {
         if (_arl == null)
@@ -48,7 +62,7 @@ public class BeamWeapon : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /// <summary> Активация орудия. </summary>
     public void Active(List<BeamWeapon> _otherWeapon)
     {
         if (NecessarySystem != null)
@@ -127,6 +141,7 @@ public class BeamWeapon : MonoBehaviour
         }
     }
 
+    /// <summary> Выключение корреток и их света. </summary>
     void DeactiveArcLights()
     {
         L1.gameObject.SetActive(false);
@@ -138,6 +153,7 @@ public class BeamWeapon : MonoBehaviour
 
         SetLightsOnPosition = false;
     }
+    /// <summary> Выбор цели. </summary>
     void TargetSelecting()
     {
         if (WeaponSystem.MainTarget != null)
@@ -213,7 +229,7 @@ public class BeamWeapon : MonoBehaviour
             }
         }
     }
-
+    /// <summary> Разворот орудия на цель. </summary>
     void RotateBeamOnTarget(Transform target)
     {
         if (target != null)
@@ -230,6 +246,7 @@ public class BeamWeapon : MonoBehaviour
             }
         }
     }
+    /// <summary> Ведение огня. </summary>
     void Attacking()
     {
         if (curReloadTime <= 0)
@@ -245,7 +262,7 @@ public class BeamWeapon : MonoBehaviour
             }
         }
     }
-
+    /// <summary> Создание луча и начало нанесения урона. </summary>
     void Fire()
     {
         if (!Arc)
@@ -254,7 +271,7 @@ public class BeamWeapon : MonoBehaviour
             _arl.PhaserFire(Target.transform);
         }
     }
-
+    /// <summary> Если цель видна. </summary>
     bool SeeTarget(Transform target)
     {        
         RotateBeamOnTarget(target);
@@ -315,9 +332,9 @@ public class BeamWeapon : MonoBehaviour
 
         return false;
     }
-
+    /// <summary> Производится ли установка корреток на позиции. </summary>
     private bool SetLightsOnPosition;
-
+    /// <summary> Последовательность атаки дугового орудия. </summary>
     private void ArcAttackSequence(int node)
     {
 
@@ -352,7 +369,7 @@ public class BeamWeapon : MonoBehaviour
             curReloadTime = ReloadTime;
         }
     }
-
+    /// <summary> Работа корретки. </summary>
     void LControllVoid(Mover light, int node, bool Revert)
     {
         float LSpeed = light.speed;
