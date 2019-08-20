@@ -1,72 +1,74 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class WeaponModule : Module
+namespace Modules
 {
-    /// <summary> Радиус орудий. </summary>
-    public float WeaponRange;
-    /// <summary> Наведение орудий. </summary>
-    public STMethods.AttackType Aiming;
-    /// <summary> Все цели, доступные для стрельбы. </summary>
-    public List<SelectableObject> Targets;
-    /// <summary> Главная цель для стрельбы. </summary>
-    public SelectableObject MainTarget;
-
-    /// <summary> Лучевые орудия. </summary>
-    public List<BeamWeapon> BeamWeapons;
-    /// <summary> Торпедные и дисраптерные установки. </summary>
-    public List<TorpedoLauncher> Launchers;
-    
-    /// <summary> Механика системы в рабочем состоянии. </summary>
-    public override void Active()
+    public class WeaponModule : Module
     {
-        if (MainTarget != null)
-        {
-            if (!MainTarget.healthSystem || Vector3.Distance(transform.position, MainTarget.transform.position) > WeaponRange)
-            {
-                MainTarget = null;
-            }
-        }
+        /// <summary> Радиус орудий. </summary>
+        public float WeaponRange;
+        /// <summary> Наведение орудий. </summary>
+        public STMethods.AttackType Aiming;
+        /// <summary> Все цели, доступные для стрельбы. </summary>
+        public List<SelectableObject> Targets;
+        /// <summary> Главная цель для стрельбы. </summary>
+        public SelectableObject MainTarget;
 
-        if (Targets.Count > 0)
+        /// <summary> Лучевые орудия. </summary>
+        public List<BeamWeapon> BeamWeapons;
+        /// <summary> Торпедные и дисраптерные установки. </summary>
+        public List<TorpedoLauncher> Launchers;
+    
+        /// <summary> Механика системы в рабочем состоянии. </summary>
+        public override void Active()
         {
-            foreach (SelectableObject _targets in Targets)
+            if (MainTarget != null)
             {
-                if (!_targets.healthSystem || Vector3.Distance(transform.position, _targets.transform.position) > WeaponRange)
+                if (!MainTarget.healthSystem || Vector3.Distance(transform.position, MainTarget.transform.position) > WeaponRange)
                 {
-                    Targets.Remove(_targets);
+                    MainTarget = null;
+                }
+            }
+
+            if (Targets.Count > 0)
+            {
+                foreach (SelectableObject _targets in Targets)
+                {
+                    if (!_targets.healthSystem || Vector3.Distance(transform.position, _targets.transform.position) > WeaponRange)
+                    {
+                        Targets.Remove(_targets);
+                    }
+                }
+            }
+
+            if (BeamWeapons.Count > 0)
+            {
+                foreach (BeamWeapon _pw in BeamWeapons)
+                {
+                    List<BeamWeapon> test = new List<BeamWeapon>(BeamWeapons.ToList());
+                    test.Remove(_pw);
+                    _pw.Active(test);
+                }
+            }
+            if (Launchers.Count > 0)
+            {
+                foreach (TorpedoLauncher _l in Launchers)
+                {
+                    _l.Active();
                 }
             }
         }
-
-        if (BeamWeapons.Count > 0)
+        /// <summary> Инициализация листа целей. </summary>
+        void Awake()
         {
-            foreach (BeamWeapon _pw in BeamWeapons)
-            {
-                List<BeamWeapon> test = new List<BeamWeapon>(BeamWeapons.ToList());
-                test.Remove(_pw);
-                _pw.Active(test);
-            }
+            Targets = new List<SelectableObject>();
         }
-        if (Launchers.Count > 0)
-        {
-            foreach (TorpedoLauncher _l in Launchers)
-            {
-                _l.Active();
-            }
-        }
-    }
-    /// <summary> Инициализация листа целей. </summary>
-    void Awake()
-    {
-        Targets = new List<SelectableObject>();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
+        // Update is called once per frame
+        void Update()
+        {
         
+        }
     }
 }
