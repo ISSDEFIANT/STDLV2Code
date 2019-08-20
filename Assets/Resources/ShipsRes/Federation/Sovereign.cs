@@ -30,19 +30,20 @@ public class Sovereign : ShipType1
         
         Modules = new Module[2]{gameObject.AddComponent<WeaponModule>(), gameObject.AddComponent<SensorModule>()};
 
-        Vector3 plus = transform.rotation.eulerAngles + new Vector3(0,90,0);
         Quaternion init = this.transform.rotation;
-        init.eulerAngles = plus;
         
         GameObject model = (GameObject)Instantiate(Resources.Load("Models/Federation/Ships/STDL_Sovereign/SovereignPre"), transform.position, init);
 
         model.transform.parent = transform;
 
         moveComponent.Model = model.transform;
+        moveComponent.MaxSpeed = 17;
+        moveComponent.Acceleration = 5;
 
         WeaponModule _wm = (WeaponModule)Modules[0];
         _wm.WeaponRange = 100;
         _wm.BeamWeapons = gameObject.GetComponentsInChildren<BeamWeapon>().ToList();
+        _wm.Owner = this;
         foreach (BeamWeapon _bw in _wm.BeamWeapons)
         {
             _bw.WeaponSystem = _wm;

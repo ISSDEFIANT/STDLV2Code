@@ -27,7 +27,7 @@ public class ShipType1 : Mobile
         ShildsObj = new GameObject();
         ShildsObj.transform.parent = transform;
         ShildsObj.transform.localPosition = Vector3.zero;
-        ShildsObj.name = "Shilds";
+        ShildsObj.name = "Shields";
     }
 
     // Update is called once per frame

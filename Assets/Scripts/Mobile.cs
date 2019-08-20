@@ -11,6 +11,8 @@ public class Mobile : SelectableObject
     public EngineModule moveComponent;
     /// <summary> Другие модули. </summary>
     public Module[] Modules;
+    /// <summary> Временный флот. </summary>
+    public List<Mobile> TimelyFleet;
     
     /// <summary> Инициализация двигателей. </summary>
     public override void Awake()

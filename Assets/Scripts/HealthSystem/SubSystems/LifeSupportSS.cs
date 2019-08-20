@@ -24,11 +24,11 @@ public class LifeSupportSS : SubSystem
     {
         if (healthSystem.curCrew > healthSystem.MaxCrew / 100)
         {
-            healthSystem.CrewDamage(Time.deltaTime * healthSystem.MaxCrew / 100);
+            healthSystem.CrewDamage(Time.deltaTime * (3 + healthSystem.MaxCrew / 100));
         }
         else
         {
-            healthSystem.CrewDamage(Time.deltaTime * healthSystem.MaxCrew / 10000);
+            healthSystem.CrewDamage(Time.deltaTime * healthSystem.MaxCrew / 1000);
         }
     }
 }

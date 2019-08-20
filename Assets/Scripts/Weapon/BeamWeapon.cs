@@ -165,7 +165,7 @@ public class BeamWeapon : MonoBehaviour
             }
             else
             {
-                if (WeaponSystem.Alerts == STMethods.Alerts.RedAlert)
+                if (WeaponSystem.Owner.Alerts == STMethods.Alerts.RedAlert)
                 {
                     if (WeaponSystem.Targets.Count > 0 && Target == null)
                     {
@@ -198,7 +198,7 @@ public class BeamWeapon : MonoBehaviour
         }
         else
         {
-            if (WeaponSystem.Alerts == STMethods.Alerts.RedAlert)
+            if (WeaponSystem.Owner.Alerts == STMethods.Alerts.RedAlert)
             {
                 if (WeaponSystem.Targets.Count > 0 && Target == null)
                 {

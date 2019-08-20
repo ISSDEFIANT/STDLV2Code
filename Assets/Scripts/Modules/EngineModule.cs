@@ -66,10 +66,22 @@ public class EngineModule : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (Moving  && CanMove)
+        if (CanMove)
         {
-            CalculateTargetParameters();
-            MoveToTarget(Target);
+            if (Moving)
+            {
+                CalculateTargetParameters();
+                MoveToTarget(Target);
+
+                if (Vector3.Distance(transform.position, Target) < 0.5f)
+                {
+                    Moving = false;
+                }
+            }
+        }
+        else
+        {
+            Moving = false;
         }
     }
 

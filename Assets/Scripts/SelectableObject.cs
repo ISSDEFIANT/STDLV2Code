@@ -9,8 +9,14 @@ public class SelectableObject : MonoBehaviour
     public bool frameSelection;
     /// <summary> Имеет ли систему жизней. </summary>
     public bool healthSystem;
+    
+    /// <summary> Тревога. </summary>
+    public STMethods.Alerts Alerts;    
     /// <summary> Система жизней. </summary>
     [HideInInspector] public HealthSystem _hs;
+    
+    /// <summary> Список кораблей, которые защищают объект. </summary>
+    public List<Mobile> ProtectionFleet;
 
     // Start is called before the first frame update
 

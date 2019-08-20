@@ -14,8 +14,9 @@ public class Static : SelectableObject
 
     // Update is called once per frame
     /// <summary> Включение модулей в работу. </summary>
-    void Update()
+    public override void Update()
     {
+        base.Update();
         foreach (var _module in Modules)
         {
             _module.Active();

@@ -28,15 +28,15 @@ public class KliBuilder : ShipType1
         
         Modules = new Module[1]{gameObject.AddComponent<SensorModule>()};
         
-        Vector3 plus = transform.rotation.eulerAngles + new Vector3(0,180,0);
         Quaternion init = this.transform.rotation;
-        init.eulerAngles = plus;
         
         GameObject model = (GameObject)Instantiate(Resources.Load("Models/Klingon/Ships/Builder/BuilderPre"), transform.position, init);
 
         model.transform.parent = transform;
         
         moveComponent.Model = model.transform;
+        moveComponent.MaxSpeed = 15;
+        moveComponent.Acceleration = 5;
     }
 
     // Update is called once per frame

@@ -145,97 +145,104 @@ public class HealthSystem : MonoBehaviour
         switch (aiming)
         {
             case STMethods.AttackType.NormalAttack:
-                curHull -= Time.deltaTime*damage;
+                curHull -= damage*0.6f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 5);
+                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage*0.4f);
                 }
                 break;
             case STMethods.AttackType.PrimaryWeaponSystemAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.2f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
+                    _ss.SubSystemCurHealth -= Time.deltaTime * Random.Range(0, damage * 0.1f);
                     if (_ss is PrimaryWeaponSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.7f;
                     }
                 }
                 break;
             case STMethods.AttackType.SecondaryWeaponSystemAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.4f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
+                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage*0.1f);
                     if (_ss is SecondaryWeaponSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.5f;
                     }
                 }
                 break;
             case STMethods.AttackType.ImpulseSystemAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.1f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
+                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage*0.1f);
                     if (_ss is ImpulsEngineSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.8f;
                     }
                 }
                 break;
             case STMethods.AttackType.WarpEngingSystemAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.1f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
+                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage*0.1f);
                     if (_ss is WarpEngineSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.7f;
+                    }
+                    if (_ss is WarpCoreSS)
+                    {
+                        _ss.SubSystemCurHealth -= damage*0.1f;
                     }
                 }
                 break;
             case STMethods.AttackType.WarpCoreAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.3f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
+                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage*0.1f);
+                    if (_ss is WarpEngineSS)
+                    {
+                        _ss.SubSystemCurHealth -= damage*0.1f;
+                    }
                     if (_ss is WarpCoreSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.5f;
                     }
                 }
                 break;
             case STMethods.AttackType.LifeSupportSystemAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.3f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
+                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage*0.1f);
                     if (_ss is LifeSupportSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.6f;
                     }
                 }
                 break;
             case STMethods.AttackType.SensorsSystemAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.2f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
+                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage*0.1f);
                     if (_ss is SensorSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.7f;
                     }
                 }
                 break;
             case STMethods.AttackType.TractorBeamSystemAttack:
-                curHull -= Time.deltaTime*damage/5;
+                curHull -= damage*0.01f;
                 foreach (SubSystem _ss in SubSystems)
                 {
-                    _ss.SubSystemCurHealth -= Time.deltaTime*Random.Range(0, damage / 10);
                     if (_ss is TractorBeamSS)
                     {
-                        _ss.SubSystemCurHealth -= Time.deltaTime*damage/2;
+                        _ss.SubSystemCurHealth -= damage*0.99f;
                     }
                 }
                 break;

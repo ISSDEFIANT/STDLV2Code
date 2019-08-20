@@ -7,8 +7,6 @@ public class WeaponModule : Module
 {
     /// <summary> Радиус орудий. </summary>
     public float WeaponRange;
-    /// <summary> Тревога. </summary>
-    public STMethods.Alerts Alerts;
     /// <summary> Наведение орудий. </summary>
     public STMethods.AttackType Aiming;
     /// <summary> Все цели, доступные для стрельбы. </summary>
