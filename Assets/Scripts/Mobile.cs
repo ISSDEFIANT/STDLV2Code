@@ -24,6 +24,8 @@ public class Mobile : SelectableObject
         rigitBody.useGravity = false;
         
         moveComponent = gameObject.AddComponent<EngineModule>();
+        
+        TimelyFleet = new List<Mobile>();
     }
 
     /// <summary> Включение модулей. </summary>

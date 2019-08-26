@@ -31,6 +31,14 @@ public static class STMethods
         SensorsSystemAttack,
         TractorBeamSystemAttack
     }
+    
+    public enum ResourcesType
+    {
+        Titanium,
+        Dilithium,
+        Biomatter,
+        Crew
+    }
 
     /// <summary> Тип проигрывания движения по рельсе. </summary>
 
@@ -92,6 +100,15 @@ public static class STMethods
     public static bool FindInList(AudioClip obj, List<AudioClip> list)
     {
         foreach (AudioClip selObj in list)
+        {
+            if (selObj == obj)
+                return true;
+        }
+        return false;
+    }
+    public static bool FindInList(Mobile obj, List<Mobile> list)
+    {
+        foreach (Mobile selObj in list)
         {
             if (selObj == obj)
                 return true;

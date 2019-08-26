@@ -22,7 +22,7 @@ public class SelectableObject : MonoBehaviour
 
     public virtual void Awake()
     {
-        
+        ProtectionFleet = new List<Mobile>();
     }
 
     // Update is called once per frame
