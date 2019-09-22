@@ -106,6 +106,7 @@ public static class STMethods
         }
         return false;
     }
+    /// <summary> Найти в листе (Mobile). </summary>
     public static bool FindInList(Mobile obj, List<Mobile> list)
     {
         foreach (Mobile selObj in list)
@@ -114,6 +115,27 @@ public static class STMethods
                 return true;
         }
         return false;
+    }
+    /// <summary> Найти в листе (SelectableObject). </summary>
+    public static bool FindInList(SelectableObject obj, List<SelectableObject> list)
+    {
+        foreach (SelectableObject selObj in list)
+        {
+            if (selObj == obj)
+                return true;
+        }
+        return false;
+    }
+    /// <summary> Удалить все пустые области из листа. </summary>
+    public static void RemoveAllNullsFromList<T>(List<T> list)
+    {
+        foreach (T obj in list)
+        {
+            if (obj == null)
+            {
+                list.Remove(obj);
+            }
+        }
     }
 }
 [System.Serializable]

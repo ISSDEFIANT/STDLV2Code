@@ -6,10 +6,11 @@ using UnityEngine;
 
 public class BeamWeapon : MonoBehaviour
 {
-    /// <summary> Орудийная система. </summary>
-    public WeaponModule WeaponSystem;
     /// <summary> Подсистема, влияющая на орудие. </summary>
-    public SubSystem NecessarySystem;
+    public PrimaryWeaponSS NecessarySystem;
+    
+    /// <summary> Прицеливание. </summary>
+    public STMethods.AttackType AimingTarget;
 
     /// <summary> Является ли дугой. </summary>
     public bool Arc;
@@ -47,6 +48,9 @@ public class BeamWeapon : MonoBehaviour
     /// <summary> Система запуска луча. </summary>
     private ArcReactor_Launcher _arl;
 
+    /// <summary> Другие орудия. </summary>
+    public List<BeamWeapon> otherWeapon;
+
     /// <summary> Нахождение системы запуска луча. </summary>
     void Start()
     {
@@ -63,31 +67,14 @@ public class BeamWeapon : MonoBehaviour
         }
     }
 
-    /// <summary> Активация орудия. </summary>
-    public void Active(List<BeamWeapon> _otherWeapon)
+    void Update()
     {
-        if (NecessarySystem != null)
-        {
-            curDamage = Damage * NecessarySystem.efficiency;
-
-            if (NecessarySystem.efficiency < 0.1f)
-            {
-                return;
-            }
-        }
-        else
-        {
-            curDamage = Damage;
-        }
-
-        TargetSelecting();
-
         if (Target != null)
         {
-            if (_otherWeapon.Count > 1)
+            if (otherWeapon.Count > 1)
             {
-                _otherWeapon.Remove(this);
-                foreach (BeamWeapon beam in _otherWeapon)
+                otherWeapon.Remove(this);
+                foreach (BeamWeapon beam in otherWeapon)
                 {
                     if (beam.ChargeringArc)
                     {
@@ -122,7 +109,7 @@ public class BeamWeapon : MonoBehaviour
             {
                 Vector3 LookVector = (Target.transform.position - this.transform.position);
                     
-                Target._hs.ApplyDamage(curDamage, WeaponSystem.Aiming, LookVector);
+                Target._hs.ApplyDamage(curDamage, AimingTarget, LookVector);
                 curFireTime -= Time.deltaTime;
                 BeamLight.SetActive(true);
             }
@@ -138,8 +125,32 @@ public class BeamWeapon : MonoBehaviour
             {
                 BeamLight.SetActive(false);
                 ChargeringArc = false;
+                NecessarySystem.DeleteFromTargetList(Target);
+                Target = null;
             }
         }
+    }
+
+    /// <summary> Активация орудия. </summary>
+    public void Active(SelectableObject target, STMethods.AttackType aiming)
+    {
+        AimingTarget = aiming;
+        
+        if (NecessarySystem != null)
+        {
+            curDamage = Damage * NecessarySystem.efficiency;
+
+            if (NecessarySystem.efficiency < 0.1f)
+            {
+                return;
+            }
+        }
+        else
+        {
+            curDamage = Damage;
+        }
+
+        FireCheck(target);
     }
 
     /// <summary> Выключение корреток и их света. </summary>
@@ -155,79 +166,17 @@ public class BeamWeapon : MonoBehaviour
         SetLightsOnPosition = false;
     }
     /// <summary> Выбор цели. </summary>
-    void TargetSelecting()
+    /// <summary> Может ли стрелять. </summary>
+    void FireCheck(SelectableObject target)
     {
-        if (WeaponSystem.MainTarget != null)
+        if (SeeTarget(target.transform))
         {
-            if (SeeTarget(WeaponSystem.MainTarget.transform))
-            {
-                Target = WeaponSystem.MainTarget;
-                RotateBeamOnTarget(Target.transform);
-            }
-            else
-            {
-                if (WeaponSystem.Owner.Alerts == STMethods.Alerts.RedAlert)
-                {
-                    if (WeaponSystem.Targets.Count > 0 && Target == null)
-                    {
-                        foreach (SelectableObject targets in WeaponSystem.Targets)
-                        {
-                            if (SeeTarget(targets.transform))
-                            {
-                                Target = targets;
-                                RotateBeamOnTarget(Target.transform);
-                            }
-                        }
-                    }
-                    else if(Target != null)
-                    {
-                        if (!SeeTarget(Target.transform))
-                        {
-                            Target = null;
-                        }
-                    }
-                    else if(WeaponSystem.Targets.Count == 0)
-                    {
-                        Target = null;
-                    }
-                }
-                else
-                {
-                    Target = null;
-                }
-            }
+            Target = target;
+            RotateBeamOnTarget(Target.transform);
         }
         else
         {
-            if (WeaponSystem.Owner.Alerts == STMethods.Alerts.RedAlert)
-            {
-                if (WeaponSystem.Targets.Count > 0 && Target == null)
-                {
-                    foreach (SelectableObject targets in WeaponSystem.Targets)
-                    {
-                        if (SeeTarget(targets.transform))
-                        {
-                            Target = targets;
-                            RotateBeamOnTarget(Target.transform);
-                        }
-                    }
-                }
-                else if(Target != null)
-                {
-                    if (!SeeTarget(Target.transform))
-                    {
-                        Target = null;
-                    }
-                }
-                else if(WeaponSystem.Targets.Count == 0)
-                {
-                    Target = null;
-                }
-            }
-            else
-            {
-                Target = null;
-            }
+            Target = null; 
         }
     }
     /// <summary> Разворот орудия на цель. </summary>

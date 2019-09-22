@@ -10,8 +10,6 @@ public class Mobile : SelectableObject
     public Rigidbody rigitBody;
     /// <summary> Модуль двигателей. </summary>
     public EngineModule moveComponent;
-    /// <summary> Другие модули. </summary>
-    public Module[] Modules;
     /// <summary> Временный флот. </summary>
     public List<Mobile> TimelyFleet;
     
@@ -32,13 +30,5 @@ public class Mobile : SelectableObject
     public override void Update()
     {
         base.Update();
-        
-        if (Modules.Length != 0)
-        {
-            foreach (var _module in Modules)
-            {
-                _module.Active();
-            }
-        }
     }
 }

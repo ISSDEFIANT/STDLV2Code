@@ -15,9 +15,17 @@ public class SelectableObject : MonoBehaviour
     /// <summary> Система жизней. </summary>
     [HideInInspector] public HealthSystem _hs;
     
+    /// <summary> Радиус орудий. </summary>
+    public float WeaponRange;
+    /// <summary> До скольки целей может атаковать одновременно. </summary>
+    public int MaxAttackTargetCount;
+    
     /// <summary> Список кораблей, которые защищают объект. </summary>
     public List<Mobile> ProtectionFleet;
 
+    /// <summary> Уничтожен. </summary>
+    [HideInInspector] public bool destroyed;
+    
     // Start is called before the first frame update
 
     public virtual void Awake()

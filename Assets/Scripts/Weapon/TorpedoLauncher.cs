@@ -6,11 +6,12 @@ using UnityEngine;
 
 public class TorpedoLauncher : MonoBehaviour
 {
-    /// <summary> Орудийная система. </summary>
-    public WeaponModule WeaponSystem;
     /// <summary> Подсистема, влияющая на орудие. </summary>
-    public SubSystem NecessarySystem;
-    
+    public SecondaryWeaponSS NecessarySystem;
+
+    /// <summary> Прицеливание. </summary>
+    public STMethods.AttackType AimingTarget;
+
     /// <summary> Торпеда (снаряд). </summary>
     public GameObject shell;
 
@@ -19,16 +20,19 @@ public class TorpedoLauncher : MonoBehaviour
 
     /// <summary> Максимальное количество торпед (снарядов). </summary>
     public int maxTorpidos;
+
     /// <summary> Текущее количество торпед (снарядов). </summary>
     [HideInInspector] public int curTorpidos;
 
     /// <summary> Задержка между выстрелами. </summary>
     public float TorpedoRange = 1;
+
     /// <summary> Текущая задержка. </summary>
     [HideInInspector] public float curTorpedoRange = 0;
 
     /// <summary> Время перезарядки залпа. </summary>
     public float ReloadTime;
+
     /// <summary> Текущее время перезарядки залпа. </summary>
     [HideInInspector] public float curReloadTime;
 
@@ -40,6 +44,7 @@ public class TorpedoLauncher : MonoBehaviour
 
     /// <summary> Торпеды (снаряды). </summary>
     public GameObject[] AllTorpedose;
+
     /// <summary> Количество торпед (снарядов). </summary>
     private int poolSize;
 
@@ -47,8 +52,10 @@ public class TorpedoLauncher : MonoBehaviour
     private bool Reloading;
 
     /// <summary> Орудие активно. </summary>
-    public void Active()
+    public void Active(SelectableObject target, STMethods.AttackType aiming)
     {
+        AimingTarget = aiming;
+
         if (NecessarySystem != null)
         {
             if (NecessarySystem.efficiency < 0.1f)
@@ -57,105 +64,23 @@ public class TorpedoLauncher : MonoBehaviour
             }
         }
 
-        TargetSelecting();
-
-        if (Target != null && !Reloading)
-        {
-            Attacking();
-        }
-
-        if (Reloading)
-        {
-            if (curTorpidos <= 0)
-            {
-                if (curReloadTime > 0)
-                {
-                    curReloadTime -= Time.deltaTime;
-                }
-                else
-                {
-                    curTorpidos = maxTorpidos;
-                    Reloading = false;
-                }
-            }
-        }
+        FireCheck(target);
     }
-    /// <summary> Выбор цели. </summary>
-    void TargetSelecting()
+
+    /// <summary> Может ли стрелять. </summary>
+    void FireCheck(SelectableObject target)
     {
-        if (WeaponSystem.MainTarget != null)
+        if (SeeTarget(target.transform))
         {
-            if (SeeTarget(WeaponSystem.MainTarget.transform))
-            {
-                Target = WeaponSystem.MainTarget;
-                RotateOnTarget(Target.transform);
-            }
-            else
-            {
-                if (WeaponSystem.Owner.Alerts == STMethods.Alerts.RedAlert)
-                {
-                    if (WeaponSystem.Targets.Count > 0 && Target == null)
-                    {
-                        foreach (SelectableObject targets in WeaponSystem.Targets)
-                        {
-                            if (SeeTarget(targets.transform))
-                            {
-                                Target = targets;
-                                RotateOnTarget(Target.transform);
-                            }
-                        }
-                    }
-                    else if (Target != null)
-                    {
-                        if (!SeeTarget(Target.transform))
-                        {
-                            Target = null;
-                        }
-                    }
-                    else if (WeaponSystem.Targets.Count == 0)
-                    {
-                        Target = null;
-                    }
-                }
-                else
-                {
-                    Target = null;
-                }
-            }
+            Target = target;
+            RotateOnTarget(Target.transform);
         }
         else
         {
-            if (WeaponSystem.Owner.Alerts == STMethods.Alerts.RedAlert)
-            {
-                if (WeaponSystem.Targets.Count > 0 && Target == null)
-                {
-                    foreach (SelectableObject targets in WeaponSystem.Targets)
-                    {
-                        if (SeeTarget(targets.transform))
-                        {
-                            Target = targets;
-                            RotateOnTarget(Target.transform);
-                        }
-                    }
-                }
-                else if (Target != null)
-                {
-                    if (!SeeTarget(Target.transform))
-                    {
-                        Target = null;
-                    }
-                }
-                else if (WeaponSystem.Targets.Count == 0)
-                {
-                    Target = null;
-                }
-            }
-            else
-            {
-                Target = null;
-            }
+            Target = null;
         }
     }
+
     /// <summary> Разворот на цель. </summary>
     void RotateOnTarget(Transform target)
     {
@@ -167,6 +92,7 @@ public class TorpedoLauncher : MonoBehaviour
 
         }
     }
+
     /// <summary> Видит ли цель. </summary>
     bool SeeTarget(Transform target)
     {
@@ -220,6 +146,7 @@ public class TorpedoLauncher : MonoBehaviour
 
         return false;
     }
+
     /// <summary> Процесс атаки. </summary>
     void Attacking()
     {
@@ -232,6 +159,9 @@ public class TorpedoLauncher : MonoBehaviour
                 curTorpidos -= 1;
 
                 curTorpedoRange = TorpedoRange;
+
+                Target = null;
+                NecessarySystem.DeleteFromTargetList(Target);
             }
             else
             {
@@ -269,6 +199,7 @@ public class TorpedoLauncher : MonoBehaviour
             AllTorpedose[i].SetActive(false);
         }
     }
+
     /// <summary> Активация торпед (снарядов). </summary>
     public void InstantiateAlternative()
     {
@@ -281,19 +212,44 @@ public class TorpedoLauncher : MonoBehaviour
                 AllTorpedose[i].transform.rotation = gameObject.transform.rotation;
                 Shell _s = AllTorpedose[i].GetComponent<Shell>();
 
-                _s.attackType = WeaponSystem.Aiming;
+                _s.attackType = AimingTarget;
                 _s.collisionDelay = collisionDelay;
                 _s.target = Target.transform;
                 break;
             }
         }
     }
-/// <summary> Уничтожение торпед (снарядов) вместе с орудийной системой. </summary>
+
+    /// <summary> Уничтожение торпед (снарядов) вместе с орудийной системой. </summary>
     private void OnDestroy()
     {
         foreach (GameObject _t in AllTorpedose)
         {
             Destroy(_t);
+        }
+    }
+
+    private void Update()
+    {
+        if (Target != null && !Reloading)
+        {
+            Attacking();
+        }
+
+        if (Reloading)
+        {
+            if (curTorpidos <= 0)
+            {
+                if (curReloadTime > 0)
+                {
+                    curReloadTime -= Time.deltaTime;
+                }
+                else
+                {
+                    curTorpidos = maxTorpidos;
+                    Reloading = false;
+                }
+            }
         }
     }
 }

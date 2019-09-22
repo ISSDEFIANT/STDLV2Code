@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class SubSystem : MonoBehaviour
 {
+    /// <summary> Владелец. </summary>
+    public SelectableObject Owner;
+    
     /// <summary> Система жизней. </summary>
     public HealthSystem healthSystem;
     
+    /// <summary> Бессмертна. </summary>
+    public bool Immortal; 
     /// <summary> Максимальная жизнь подсистемы. </summary>
     public float SubSystemMaxHealth; 
     /// <summary> Текущая жизнь подсистемы. </summary>
@@ -23,13 +28,20 @@ public class SubSystem : MonoBehaviour
     /// <summary> Основная механика подсистемы. </summary>
     public virtual void Update()
     {
-        ChangeEfficiency();
-
-        SubSystemCurHealth = Mathf.Clamp(SubSystemCurHealth, 0, SubSystemMaxHealth);
-
-        if (SubSystemCurHealth < SubSystemMaxHealth && SubSystemCurHealth > 0)
+        if (!Immortal)
         {
-            RegenerateSystem();
+            ChangeEfficiency();
+
+            SubSystemCurHealth = Mathf.Clamp(SubSystemCurHealth, 0, SubSystemMaxHealth);
+
+            if (SubSystemCurHealth < SubSystemMaxHealth && SubSystemCurHealth > 0)
+            {
+                RegenerateSystem();
+            }
+        }
+        else
+        {
+            SubSystemCurHealth = SubSystemMaxHealth;
         }
     }
     /// <summary> Полевой ремонт подсистемы. </summary>
@@ -53,11 +65,16 @@ public class SubSystem : MonoBehaviour
             efficiency = 0;
         }
     }
+
+    public virtual void isCreated(){}
+    
     /// <summary> Инициализация жизни подсистемы. </summary>
-    public SubSystem InitSystemHealth(float Health)
+    public SubSystem InitSystemHealth(float Health, SelectableObject ow)
     {
         SubSystemMaxHealth = Health;
         SubSystemCurHealth = Health;
+        Owner = ow;
+        isCreated();
         return this;
     }
 }

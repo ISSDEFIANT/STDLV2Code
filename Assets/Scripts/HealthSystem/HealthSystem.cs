@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
 {
+    /// <summary> Владелец. </summary>
+    public SelectableObject Owner;
+    
     /// <summary> Максимальная целостность корпуса. </summary>
     public float MaxHull;
     /// <summary> Текущая целостность корпуса. </summary>
@@ -53,6 +56,7 @@ public class HealthSystem : MonoBehaviour
     {
         if (curHull <= 0)
         {
+            Owner.destroyed = true;
             if (Timer > 0)
             {
                 Timer -= Time.deltaTime;

@@ -18,6 +18,8 @@ public class ShipType1 : Mobile
         healthSystem = true;
         
         _hs = gameObject.AddComponent<HealthSystem>();
+
+        _hs.Owner = this;
         
         subModulesObj = new GameObject();
         subModulesObj.transform.parent = transform;
