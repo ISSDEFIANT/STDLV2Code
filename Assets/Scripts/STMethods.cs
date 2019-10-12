@@ -39,6 +39,18 @@ public static class STMethods
         Biomatter,
         Crew
     }
+    
+    public enum PlayerNum
+    {
+        Player1,
+        Player2,
+        Player3,
+        Player4,
+        Player5,
+        Player6,
+        Player7,
+        Player8
+    }
 
     /// <summary> Тип проигрывания движения по рельсе. </summary>
 
@@ -129,11 +141,11 @@ public static class STMethods
     /// <summary> Удалить все пустые области из листа. </summary>
     public static void RemoveAllNullsFromList<T>(List<T> list)
     {
-        foreach (T obj in list)
+        for (int i = list.Count - 1; i >= 0; i--)
         {
-            if (obj == null)
+            if (GameObjectExtensions.IsDestroyed(list[i]))
             {
-                list.Remove(obj);
+                list.Remove(list[i]);
             }
         }
     }
@@ -157,3 +169,19 @@ public class FireDegreesLockSystem
     /// <summary> Максимальный Y. </summary>
     public float MaxY;
 } 
+public static class GameObjectExtensions
+{
+    /// <summary>
+    /// Checks if a GameObject has been destroyed.
+    /// </summary>
+    /// <param name="gameObject">GameObject reference to check for destructedness</param>
+    /// <returns>If the game object has been marked as destroyed by UnityEngine</returns>
+    public static bool IsDestroyed<T>(this T obj)
+    {
+        // UnityEngine overloads the == opeator for the GameObject type
+        // and returns null when the object has been destroyed, but 
+        // actually the object is still there but has not been cleaned up yet
+        // if we test both we can determine if the object has been destroyed.
+        return obj == null && !ReferenceEquals(obj, null);
+    }
+}

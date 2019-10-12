@@ -1,7 +1,7 @@
 ﻿namespace Modules
 {
     public class SensorModule : Module
-    {
+    {   
         public override void Active()
         {
         

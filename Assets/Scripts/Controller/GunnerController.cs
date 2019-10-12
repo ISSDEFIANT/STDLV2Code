@@ -30,6 +30,8 @@ namespace Controllers
         public PrimaryWeaponSS PriWea;
         /// <summary> Вторичные орудия. </summary>
         public SecondaryWeaponSS SecWea;
+        /// <summary> Сенсоры. </summary>
+        public SensorSS SenSS;
 
         /// <summary> Состояние Контроллера. </summary>
         public GunnerStatus Status;
@@ -42,7 +44,7 @@ namespace Controllers
             
             if (MainTarget != null)
             {
-                if (!MainTarget.healthSystem || Vector3.Distance(transform.position, MainTarget.transform.position) > WeaponRange || MainTarget.destroyed)
+                if (!MainTarget.healthSystem || Vector3.Distance(transform.position, MainTarget.transform.position) > WeaponRange+MainTarget.ObjectRadius+Owner.ObjectRadius || MainTarget.destroyed)
                 {
                     MainTarget = null;
                 }
@@ -57,6 +59,11 @@ namespace Controllers
 
             if (Owner.Alerts == STMethods.Alerts.RedAlert)
             {
+                if (SenSS.EnemysInSensorRange().Count > 0)
+                {
+                    Targets = SenSS.EnemysInSensorRange().ToList();
+                }
+
                 if (TargetsUnderAttack.Count < Owner.MaxAttackTargetCount)
                 {
                     if (Targets.Count > 0)
@@ -73,11 +80,12 @@ namespace Controllers
 
             if (Targets.Count > 0)
             {
-                foreach (SelectableObject _targets in Targets)
+                STMethods.RemoveAllNullsFromList(Targets);
+                for(int i = Targets.Count - 1; i >= 0; i--) 
                 {
-                    if (!_targets.healthSystem || Vector3.Distance(transform.position, _targets.transform.position) > WeaponRange || _targets.destroyed)
+                    if (!Targets[i].healthSystem || Vector3.Distance(transform.position, Targets[i].transform.position) > WeaponRange+Targets[i].ObjectRadius+Owner.ObjectRadius || Targets[i].destroyed)
                     {
-                        Targets.Remove(_targets);
+                        Targets.Remove(Targets[i]);
                     }
                 }
             }

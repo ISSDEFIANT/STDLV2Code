@@ -134,6 +134,8 @@ public class BeamWeapon : MonoBehaviour
     /// <summary> Активация орудия. </summary>
     public void Active(SelectableObject target, STMethods.AttackType aiming)
     {
+
+        if (target == null) return;
         AimingTarget = aiming;
         
         if (NecessarySystem != null)

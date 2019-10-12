@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class SelectableObject : MonoBehaviour
 {
+    /// <summary> Номер игрок. </summary>
+    public int PlayerNum;
+    
     /// <summary> Можно ли выделить рамкой. </summary>
     public bool frameSelection;
     /// <summary> Имеет ли систему жизней. </summary>
@@ -14,6 +17,12 @@ public class SelectableObject : MonoBehaviour
     public STMethods.Alerts Alerts;    
     /// <summary> Система жизней. </summary>
     [HideInInspector] public HealthSystem _hs;
+    
+    /// <summary> Радиус объекта. </summary>
+    public float ObjectRadius;
+    
+    /// <summary> Зона сенсоров. </summary>
+    public float SensorRange;
     
     /// <summary> Радиус орудий. </summary>
     public float WeaponRange;
@@ -37,5 +46,10 @@ public class SelectableObject : MonoBehaviour
     public virtual void Update()
     {
 
+    }
+
+    private void OnDestroy()
+    {
+        GameObject.FindObjectOfType<GameManager>().GetComponent<GameManager>().UpdateList();
     }
 }

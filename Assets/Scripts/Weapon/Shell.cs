@@ -64,7 +64,6 @@ public class Shell : MonoBehaviour
                     }
 
                     Instantiate(ExplosionEffect, transform.position, transform.rotation);
-                    Debug.Log(coll.name);
                     DestroyAlternative();
                 }
             }

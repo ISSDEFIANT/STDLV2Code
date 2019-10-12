@@ -56,6 +56,7 @@ public class SecondaryWeaponSS : SubSystem
     /// <summary> Атаковать не основную цель. </summary>
     public void AttackNotMainTarget(SelectableObject target, STMethods.AttackType Aiming)
     {
+        if (target == null) return;
         if (Launchers.Count > 0)
         {
             foreach (TorpedoLauncher _l in Launchers)

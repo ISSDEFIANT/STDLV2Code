@@ -16,6 +16,9 @@ public class Sovereign : ShipType1
         GameObject model = (GameObject)Instantiate(Resources.Load("Models/Federation/Ships/STDL_Sovereign/SovereignPre"), transform.position, init);
 
         model.transform.parent = transform;
+
+        ObjectRadius = 5;
+        SensorRange = 100;
         
         WeaponRange = 100;
         MaxAttackTargetCount = 2;
