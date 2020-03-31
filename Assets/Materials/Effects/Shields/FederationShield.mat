@@ -92,8 +92,8 @@ Material:
         m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _Sampler_B:
-        m_Texture: {fileID: 2800000, guid: 13f6109577c51cb47bcb06222b27ec9b, type: 3}
-        m_Scale: {x: 2, y: 2}
+        m_Texture: {fileID: 2800000, guid: 5eafe73e662373d4caa9d71ed8307657, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
@@ -142,7 +142,7 @@ Material:
     - _Color: {r: 0, g: 1, b: 0.08965516, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FieldColor: {r: 0, g: 0.6275863, b: 1, a: 1}
+    - _FieldColor: {r: 0, g: 0.6275863, b: 1, a: 0.30588236}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _Pos_a: {r: 0, g: 0, b: 0, a: 0}
     - _ReflectColor: {r: 1, g: 1, b: 1, a: 0.5}

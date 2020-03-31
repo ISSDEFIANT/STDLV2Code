@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Forcefield : MonoBehaviour
 {
-
+	private Renderer ren;
 	private Material[] mats;
 	private MeshFilter mesh;
 
@@ -14,15 +14,17 @@ public class Forcefield : MonoBehaviour
 
 	public float delayTime = 2.0f;
 	public bool Shot;
-	public Vector3 AttackVector;
 
 	public bool ClockingEffect;
 	
-	public float ShieldDeactivationTimer;
+	public float ShieldDeactivationTimer = 2f;
+
+	private float curshielddeacttimer;
 	// Use this for initialization
 	void Start()
 	{
-		mats = forceField.gameObject.GetComponent<Renderer>().materials;
+		ren = forceField.gameObject.GetComponent<Renderer>();
+		mats = ren.materials;
 		mesh = forceField.gameObject.GetComponent<MeshFilter>();
 	}
 
@@ -60,6 +62,7 @@ public class Forcefield : MonoBehaviour
 	public void OnHit(Vector3 hitPoint)
 	{
 		UpdateMask(hitPoint);
+		curshielddeacttimer = ShieldDeactivationTimer;
 	}
 
 	//void OnMouseHit()
@@ -83,7 +86,7 @@ public class Forcefield : MonoBehaviour
 		{
 			if (Shot)
 			{
-				UpdateMask(AttackVector);
+				UpdateMask(Vector3.zero);
 				if (curTimer > 0)
 				{
 					curTimer -= Time.deltaTime;
@@ -97,24 +100,16 @@ public class Forcefield : MonoBehaviour
 			}
 
 			FadeMask();
+		}
+
+		if (curshielddeacttimer > 0)
+		{
+			curshielddeacttimer -= Time.deltaTime;
 		}
 		else
 		{
-			FadeMask();
-			if (Shot)
-			{
-				UpdateMask(transform.position);
-				if (curTimer > 0)
-				{
-					curTimer -= Time.deltaTime;
-				}
-
-				if (curTimer <= 0)
-				{
-					curTimer = Timer;
-					Shot = false;
-				}
-			}
+			if (ren.enabled) ren.enabled = false;
 		}
+		FadeMask();
 	}
 }

@@ -10,14 +10,18 @@ public class Sovereign : ShipType1
     public override void Awake()
     {
         base.Awake();
+
+        AttackProbability.AlphaProbability = 0.5f;
+        AttackProbability.BetaProbability = 0.75f;
+        AttackProbability.GammaProbability = 1;
         
         Quaternion init = this.transform.rotation;
         
-        GameObject model = (GameObject)Instantiate(Resources.Load("Models/Federation/Ships/STDL_Sovereign/SovereignPre"), transform.position, init);
+        model = (GameObject)Instantiate(Resources.Load("Models/Federation/Ships/STDL_Sovereign/SovereignPre"), transform.position, init);
 
         model.transform.parent = transform;
 
-        ObjectRadius = 5;
+        ObjectRadius = 15;
         SensorRange = 100;
         
         WeaponRange = 100;
@@ -41,9 +45,19 @@ public class Sovereign : ShipType1
         
         initShilds(1,ShildsObj,_hs,500,180,100);
 
+        FindInmodelElements();
+
+        Threshold = 3f;        
+        
         moveComponent.Model = model.transform;
         moveComponent.MaxSpeed = 17;
         moveComponent.Acceleration = 5;
+        
+        Captain = gameObject.AddComponent<Captain>();
+        Captain.Owner = this;
+        Captain.Sensors = _ss as SensorSS;
+
+        rigitBody.mass = 3205000;
     }
 
     // Update is called once per frame

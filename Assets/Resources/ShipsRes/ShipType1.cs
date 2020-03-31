@@ -10,11 +10,13 @@ public class ShipType1 : Mobile
     /// <summary> Объект, на который будут установлены компоненты щитов. </summary>
     protected GameObject ShildsObj;
     
+    /// <summary> ИИ корабля. </summary>
+    protected Captain Captain;
+    
     /// <summary> Инициализация системы жизней, и объектов для подсистем и щитов </summary>
     public override void Awake()
     {
         base.Awake();
-        frameSelection = true;
         healthSystem = true;
         
         _hs = gameObject.AddComponent<HealthSystem>();

@@ -31,13 +31,29 @@ public class KliBuilder : ShipType1
         
         Quaternion init = this.transform.rotation;
         
-        GameObject model = (GameObject)Instantiate(Resources.Load("Models/Klingon/Ships/Builder/BuilderPre"), transform.position, init);
+        model = (GameObject)Instantiate(Resources.Load("Models/Klingon/Ships/Builder/BuilderPre"), transform.position, init);
 
         model.transform.parent = transform;
+        
+        ObjectRadius = 10;
+        SensorRange = 80;
+        
+        WeaponRange = 0;
+        MaxAttackTargetCount = 0;
+        
+        Threshold = 1f;        
         
         moveComponent.Model = model.transform;
         moveComponent.MaxSpeed = 15;
         moveComponent.Acceleration = 5;
+        
+        FindInmodelElements();
+        
+        Captain = gameObject.AddComponent<Captain>();
+        Captain.Owner = this;
+        Captain.Sensors = _ss as SensorSS;
+
+        rigitBody.mass = 200000;
     }
 
     // Update is called once per frame

@@ -78,7 +78,7 @@ MonoBehaviour:
       useCameraFov: 0
       kernelSize: 1
   motionBlur:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       shutterAngle: 270
       sampleCount: 4
@@ -113,7 +113,7 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       tonemapping:
-        tonemapper: 2
+        tonemapper: 1
         neutralBlackIn: 0.02
         neutralWhiteIn: 12
         neutralBlackOut: -0.01
@@ -121,12 +121,12 @@ MonoBehaviour:
         neutralWhiteLevel: 5.3
         neutralWhiteClip: 10
       basic:
-        postExposure: 0
+        postExposure: 0.3
         temperature: 20
         tint: 0
         hueShift: 0
-        saturation: 1
-        contrast: 1.7
+        saturation: 1.26
+        contrast: 1.1
       channelMixer:
         red: {x: 1, y: 0, z: 0}
         green: {x: 0, y: 1, z: 0}
@@ -184,6 +184,15 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
+            - serializedVersion: 3
+              time: 0.24285714
+              value: 0.24285714
+              inSlope: 1
+              outSlope: 1
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
             - serializedVersion: 3
               time: 1
               value: 1
@@ -296,8 +305,8 @@ MonoBehaviour:
           m_ZeroValue: 0.5
           m_Range: 1
         e_CurrentEditingCurve: 0
-        e_CurveY: 1
-        e_CurveR: 0
+        e_CurveY: 0
+        e_CurveR: 1
         e_CurveG: 0
         e_CurveB: 0
   userLut:
