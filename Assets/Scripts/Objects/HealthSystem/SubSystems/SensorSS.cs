@@ -43,7 +43,7 @@ public class SensorSS : SubSystem
         }
     }
 
-    private void Update()
+    public override void Update()
     {
         base.Update();
         if (curRadius > 0)
@@ -79,10 +79,11 @@ public class SensorSS : SubSystem
         if (ObjectsIsVisible.Count == 0) return new List<SelectableObject>();
             
         List<SelectableObject> result = ObjectsIsVisible;
-        
-        for(int i = result.Count - 1; i >= 0; i--) 
+
+        for (int i = result.Count - 1; i >= 0; i--)
         {
-            if (manager.Players[result[i].PlayerNum-1].TeamNum == manager.Players[Owner.PlayerNum-1].TeamNum)
+            if (Owner.PlayerNum == 0 || result[i].PlayerNum == 0 || manager.Players[result[i].PlayerNum - 1].TeamNum ==
+                manager.Players[Owner.PlayerNum - 1].TeamNum)
             {
                 result.Remove(result[i]);
             }
@@ -99,7 +100,7 @@ public class SensorSS : SubSystem
         
         for(int i = result.Count - 1; i >= 0; i--) 
         {
-            if (manager.Players[result[i].PlayerNum-1].TeamNum != manager.Players[Owner.PlayerNum-1].TeamNum)
+            if (Owner.PlayerNum == 0 || result[i].PlayerNum != 0 && manager.Players[result[i].PlayerNum-1].TeamNum != manager.Players[Owner.PlayerNum-1].TeamNum)
             {
                 result.Remove(result[i]);
             }

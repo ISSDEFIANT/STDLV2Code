@@ -1,16 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Modules;
 using UnityEngine;
 
 public class Static : SelectableObject
 {
-    /// <summary> Модули, присутствующие на объекте. </summary>
-    public Module[] Modules;
     // Start is called before the first frame update
-    void Start()
+    public override void Awake()
     {
-        
+        base.Awake();
+        stationSelectionType = true;
     }
 
     // Update is called once per frame
@@ -18,9 +16,5 @@ public class Static : SelectableObject
     public override void Update()
     {
         base.Update();
-        foreach (var _module in Modules)
-        {
-            _module.Active();
-        }
     }
 }

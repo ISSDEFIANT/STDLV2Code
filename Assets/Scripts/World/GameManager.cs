@@ -50,4 +50,9 @@ public class PlayerInfo
     public STMethods.Races race;
     public GameObject CameraControll;
     public Color PlayerColor;
+
+    public float Titanium;
+    public float Dilithium;
+    public float Biomatter;
+    public float Crew;
 }

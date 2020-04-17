@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Modules;
 using UnityEngine;
 
 public class Mobile : SelectableObject
@@ -13,10 +12,16 @@ public class Mobile : SelectableObject
     public List<Mobile> TimelyFleet;
 
     /// <summary> Вероятность принятия паттернов атаки. </summary>
-    public AttackPatternProbability AttackProbability;
+    public AttackPatternProbability AttackProbability = new AttackPatternProbability();
     
     /// <summary> Допустимая ошибка (для двигателей). </summary>
     public float Threshold;
+    
+    /// <summary> Построен в доке. </summary>
+    public bool ConstructedOnDock;
+    
+    /// <summary> Команда выхода из дока. </summary>
+    public UndockingCommand _uc;
     
     /// <summary> Инициализация двигателей. </summary>
     public override void Awake()
@@ -58,5 +63,16 @@ public class Mobile : SelectableObject
         {
             TimelyFleet = newList.ToList();
         }
+    }
+
+    public void UndockingAfterConstruction()
+    {
+        captain.ToExitPoint = true;
+                                
+        captain.dockingStation = _uc.DocingStation;
+        captain.dockingHub = _uc.Hub;
+            
+        captain.curCommandInfo = _uc;
+        captain.Command = Captain.PlayerCommand.Undocking;
     }
 }

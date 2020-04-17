@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Modules;
 using UnityEngine;
 
 public class BeamWeapon : MonoBehaviour
@@ -100,7 +99,6 @@ public class BeamWeapon : MonoBehaviour
             {
                 DeactiveArcLights();
             }
-            
             if (NecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
             {
                 NecessarySystem.Gunner.TargetsUnderAttack.Remove(Target);

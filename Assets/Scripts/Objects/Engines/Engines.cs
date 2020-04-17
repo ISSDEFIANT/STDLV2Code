@@ -13,6 +13,9 @@ public class Engines : MonoBehaviour
     /// <summary> Двигается ли корабль. </summary>
     public bool Moving;
     
+    /// <summary> Двигается ли корабль на варпе. </summary>
+    public bool Warping;
+    
     /// <summary> Допустимая ошибка. </summary>
     public float Threshold = 1f;
     
@@ -31,11 +34,17 @@ public class Engines : MonoBehaviour
     [Tooltip("Максимальная скорость корабля")]
     public float CurMaxSpeed = 30f;
 
+    public bool WarpIn;
+    public bool WarpCourceCorrection;
+
     public float CurForwardSpeed;
 
     public SubSystem impulseControlingSubSystem;
     public SubSystem warpControlingSubSystem;
     public SubSystem warpcoreControllingSystem;
+
+    public GameObject WarpBlink;
+    public GameObject BorgWarpBlink;
 
     public bool CanMove()
     {
@@ -82,13 +91,10 @@ public class Engines : MonoBehaviour
     public float DistanceToTarget { get; protected set; }
 
     /// <summary> Расстояние которое пройдет корабль до остановки. </summary>
-    public float DistanceToFullStop
+    public float DistanceToFullStop (float accele)
     {
-        get
-        {
-            float velocity = _rigidbody.velocity.magnitude;
-            return velocity * velocity / 2 / Acceleration;
-        }
+        float velocity = _rigidbody.velocity.magnitude;
+        return velocity * velocity / 2 / accele;
     }
 
     /// <summary> Допустимая ошибка по углу. </summary>
@@ -135,12 +141,94 @@ public class Engines : MonoBehaviour
             if (Moving)
             {
                 CalculateTargetParameters();
-                MoveToTarget(Target);
-
-                if (DistanceToTarget < Threshold && _rigidbody.velocity.magnitude < Threshold * Acceleration)
+                if (!Warping)
                 {
-                    Moving = false;
-                    Pilot.Status = EngineController.State.Stopped;
+                    MoveToTarget(Target);
+
+                    if (DistanceToTarget < Threshold && _rigidbody.velocity.magnitude < Threshold * Acceleration)
+                    {
+                        Moving = false;
+                        Pilot.Status = EngineController.State.Stopped;
+                    }
+                }
+                else
+                {
+                    Vector3 targetDir = Target - transform.position;
+                    float angle = Vector3.Angle(targetDir, transform.forward);
+
+                    GameObject wBlink;
+
+                    if (angle < 5)
+                    {
+                        WarpCourceCorrection = false;
+                    }
+
+                    if (!WarpCourceCorrection)
+                    {
+                        if (Vector3.Distance(transform.position,Target) > Owner.ObjectRadius * 10)
+                        {
+                            if (CanWarp())
+                            {
+                                WarpToTarget(Target);
+                            }
+                            else
+                            {
+                                MoveToTarget(Target);
+                                if (WarpIn)
+                                {
+                                    if (Owner.Assimilated)
+                                    {
+                                        wBlink = Instantiate(BorgWarpBlink, transform.position, transform.rotation);
+                                    }
+                                    else
+                                    {
+                                        wBlink = Instantiate(WarpBlink, transform.position, transform.rotation);
+                                    }
+                                    wBlink.transform.localScale = new Vector3(Owner.ObjectRadius / 2,Owner.ObjectRadius / 2, Owner.ObjectRadius / 2);
+                                    WarpIn = false;
+                                }
+                            }
+
+                            if (angle > 15f)
+                            {
+                                WarpCourceCorrection = true;
+                            }
+                        }
+                        else
+                        {
+                            MoveToTarget(Target);
+                            if (WarpIn)
+                            {
+                                if (Owner.Assimilated)
+                                {
+                                    wBlink = Instantiate(BorgWarpBlink, transform.position, transform.rotation);
+                                }
+                                else
+                                {
+                                    wBlink = Instantiate(WarpBlink, transform.position, transform.rotation);
+                                }
+                                wBlink.transform.localScale = new Vector3(Owner.ObjectRadius / 2,Owner.ObjectRadius / 2, Owner.ObjectRadius / 2);
+                                WarpIn = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MoveToTarget(Target);
+                        if (WarpIn)
+                        {
+                            if (Owner.Assimilated)
+                            {
+                                wBlink = Instantiate(BorgWarpBlink, transform.position, transform.rotation);
+                            }
+                            else
+                            {
+                                wBlink = Instantiate(WarpBlink, transform.position, transform.rotation);
+                            }
+                            wBlink.transform.localScale = new Vector3(Owner.ObjectRadius / 2,Owner.ObjectRadius / 2, Owner.ObjectRadius / 2);
+                            WarpIn = false;
+                        }
+                    }
                 }
             }
             else
@@ -154,6 +242,7 @@ public class Engines : MonoBehaviour
         else
         {
             Moving = false;
+            Warping = false;
         }
     }
 
@@ -168,7 +257,7 @@ public class Engines : MonoBehaviour
     /// <param name="targetPosition"> Координаты цели. </param>
     private void MoveToTarget(Vector3 targetPosition)
     {
-        ClipVelocity();
+        ClipVelocity(CurMaxSpeed);
 
         if (_rigidbody.velocity.magnitude > Threshold)
         {
@@ -200,6 +289,55 @@ public class Engines : MonoBehaviour
         Vector3 force = CalculateForce(targetPosition);
         _rigidbody.AddRelativeForce(force, ForceMode.Acceleration);
     }
+    
+    private void WarpToTarget(Vector3 targetPosition)
+    {
+        ClipVelocity(250);
+
+        if (_rigidbody.velocity.magnitude > Threshold)
+        {
+            transform.rotation = Quaternion.LookRotation(_rigidbody.velocity);
+            if (!WarpIn)
+            {
+                GameObject wBlink;
+                if (Owner.Assimilated)
+                {
+                    wBlink = Instantiate(BorgWarpBlink, transform.position, transform.rotation);
+                }
+                else
+                {
+                    wBlink = Instantiate(WarpBlink, transform.position, transform.rotation);
+                }
+                wBlink.transform.localScale = new Vector3(Owner.ObjectRadius / 2,Owner.ObjectRadius / 2, Owner.ObjectRadius / 2);
+                WarpIn = true;
+            }
+        }
+        else
+        {
+            Vector3 relativePos = targetPosition - transform.position;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(relativePos),Acceleration/10 * Time.deltaTime);
+        }
+
+        if (DistanceToTarget < Threshold
+            && _rigidbody.velocity.magnitude < Threshold * Acceleration)
+        {
+            if (targetPosition.FloatEquals(transform.position)) return;
+            
+            _rigidbody.velocity = Vector3.zero;
+            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.1f);
+
+            if (Owner.captain.Command == Captain.PlayerCommand.Move)
+                Owner.captain.Command = Captain.PlayerCommand.None;
+            
+            RollShip(true);
+            return;
+        }
+
+        RollShip();
+        
+        Vector3 force = CalculateForce(targetPosition, 250);
+        _rigidbody.AddRelativeForce(force, ForceMode.Acceleration);
+    }
 
     /// <summary> Каждый кадр рассчитывает параметры цели, такие как направление на цель и т.п. </summary>
     private void CalculateTargetParameters()
@@ -220,12 +358,12 @@ public class Engines : MonoBehaviour
     /// </summary>
     /// <param name="targetPosition"></param>
     /// <returns></returns>
-    private Vector3 CalculateForce(Vector3 targetPosition)
+    private Vector3 CalculateForce(Vector3 targetPosition, float Multiplier = 1f)
     {
         Vector3 force = Vector3.zero;
         Vector3 velocity = _rigidbody.velocity;
         float speed = CurForwardSpeed;
-        bool accelerationNeeded = DistanceToTarget > DistanceToFullStop;
+        bool accelerationNeeded = DistanceToTarget > DistanceToFullStop (Acceleration*Multiplier);
         
         // Если корабль направлен не на цель -- поворачиваем
         float errorAngle = Vector3.Angle(DirectionToTarget, velocity);
@@ -234,11 +372,11 @@ public class Engines : MonoBehaviour
         float angleToTarget = Vector3.Angle(DirectionToTarget, transform.forward);
         
         // Если корабль стоит на месте, то сначала немного разгоняемся, чтобы поворот не выглядел резко
-        if (accelerationNeeded && speed < CurMaxSpeed / 4)
+        if (accelerationNeeded && speed < (CurMaxSpeed*Multiplier) / 4)
         {
             if (angleToTarget < 10 || speed > Threshold)
             {
-                force += Acceleration * Vector3.forward;
+                force += Acceleration*Multiplier * Vector3.forward;
                 return force;
             }
             return force;
@@ -268,12 +406,12 @@ public class Engines : MonoBehaviour
             // Если возможно, закладываем вираж не снижая скорости.
             // Вираж возможен, если в результате него, корабль не пролетит мимо цели.
             // Корабль пролетит мимо цели если цель находится внутри окружности, по которой будет лететь корабль.
-            float rotationRadius = speed * speed / Acceleration;
+            float rotationRadius = speed * speed / (Acceleration*Multiplier);
             Vector3 circleCenter = transform.position + forceDir * rotationRadius;
             if ((targetPosition - circleCenter).magnitude < rotationRadius
                 || !accelerationNeeded)
             {
-                force -= Acceleration * Vector3.forward;
+                force -= Acceleration*Multiplier * Vector3.forward;
             }
             return force;
         }
@@ -282,12 +420,12 @@ public class Engines : MonoBehaviour
         {
             if (Math.Abs(speed - CurMaxSpeed) > float.Epsilon)
             {
-                force += Acceleration * Vector3.forward;
+                force += Acceleration*Multiplier * Vector3.forward;
             }
         }
         else
         {
-            force -= Acceleration * Vector3.forward;
+            force -= Acceleration*Multiplier * Vector3.forward;
         }
         
         return force;
@@ -350,6 +488,23 @@ public class Engines : MonoBehaviour
 
         Target = target;
         Moving = true;
+        Warping = false;
+    }
+
+    public void Warp(Vector3 target, float speed = float.NaN)
+    {
+        if (speed != float.NaN)
+        {
+            CurMaxSpeed = speed;
+        }
+        else
+        {
+            CurMaxSpeed = MaxSpeed;
+        }
+
+        Target = target;
+        Moving = true;
+        Warping = true;
     }
     
     /// <summary> Остановка. </summary>
@@ -376,9 +531,9 @@ public class Engines : MonoBehaviour
     }
     
     /// <summary> Ограничение максимальной скорости </summary>
-    private void ClipVelocity()
+    private void ClipVelocity(float maxspeed)
     {
-        _rigidbody.velocity = _rigidbody.velocity.Clip(CurMaxSpeed);
+        _rigidbody.velocity = _rigidbody.velocity.Clip(maxspeed);
     }
     
     #endregion

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceSource : MonoBehaviour
+public class ResourceSource : SelectableObject
 {
     /// <summary> Текущее количество ресурсов. </summary>    
     public float curResources;
@@ -10,21 +10,16 @@ public class ResourceSource : MonoBehaviour
     public bool isInfinite;
     /// <summary> Тип. </summary>
     public STMethods.ResourcesType type;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    public override void Awake()
     {
-        
-    }
+        base.Awake();
+        stationSelectionType = true;
 
-    public void Mine()
-    {
-        
+        healthSystem = true;
+
+        _hs = gameObject.AddComponent<HealthSystem>();
+
+        _hs.Owner = this;
     }
 }

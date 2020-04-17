@@ -16,6 +16,8 @@ public class MaterialEffectController : MonoBehaviour
     private Material damageLMat;
     private Material damageHMat;
 
+    public bool Deactivate;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,8 @@ public class MaterialEffectController : MonoBehaviour
 
         _or = GetComponent<Renderer>();
 
+        if (Deactivate) this.enabled = false;
+        
         borgMat = (Material) Resources.Load("Effects/Borg/BorgEffect");
         damageLMat = (Material) Resources.Load("Effects/DamageAndDestructions/DamageEffect/Hull/Light/DamageEffect");
         damageHMat = (Material) Resources.Load("Effects/DamageAndDestructions/DamageEffect/Hull/Heavy/DamageEffect");

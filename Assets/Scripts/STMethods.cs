@@ -41,18 +41,6 @@ public static class STMethods
         Crew
     }
     
-    public enum PlayerNum
-    {
-        Player1,
-        Player2,
-        Player3,
-        Player4,
-        Player5,
-        Player6,
-        Player7,
-        Player8
-    }
-    
     public enum Races
     {
         Federation,
@@ -216,6 +204,33 @@ public static class STMethods
 
         return max;
     }
+
+    public static SelectableObject addObjectClass(string className, GameObject obj)
+    {
+        SelectableObject newComponent = null;
+        switch (className)
+        {
+            case "SovereignClass":
+                newComponent = obj.AddComponent<Sovereign>();
+                break;
+        }
+
+        return newComponent;
+    }
+
+    public static ConstructionContract CreateCopy(ConstructionContract obj)
+    {
+        ConstructionContract _cc = new ConstructionContract();
+        _cc.Object = obj.Object;
+        _cc.Animation = obj.Animation;
+        _cc.TitaniumCost = obj.TitaniumCost;
+        _cc.DilithiumCost = obj.DilithiumCost;
+        _cc.BiomatterCost = obj.BiomatterCost;
+        _cc.CrewCost = obj.CrewCost;
+        _cc.ConstructionTime = obj.ConstructionTime;
+
+        return _cc;
+    }
 }
 [System.Serializable]
 public class FireDegreesLockSystem
@@ -311,6 +326,7 @@ public class PlayerCommands
 public class MoveCommand : PlayerCommands
 {    
     public List<Vector3> targetVec;
+    public bool Warp = false;
 }
 public class AttackCommand : PlayerCommands
 {    
@@ -324,13 +340,40 @@ public class HideCoverCommand : PlayerCommands
     //Команда спрятаться или прикрыть относится к вспомогательным, и если есть главная, нужно иметь возможность к ней вернуться.
     public PlayerCommands MainCommand;
 }
-[System.Serializable]
-public class FleetControllingFields
-{
-    public List<SelectableObject>[] fleets = new List<SelectableObject>[10];
-}
 public class GuardCommand : PlayerCommands
 {    
     public List<Vector3> fleetPattern;
     public SelectableObject guardTarget;
+}
+
+public class PatrolCommand : PlayerCommands
+{
+    public List<Vector3> targetVec = new List<Vector3>();
+}
+
+public class MiningCommand : PlayerCommands
+{
+    public ResourceSource ResTar;
+    public SelectableObject UnloadPoint;
+    public bool ToBase;
+
+    public STMethods.ResourcesType Type;
+}
+
+public class FixingCommand : PlayerCommands
+{
+    public SelectableObject FixingPoint;
+}
+
+public class UndockingCommand : PlayerCommands
+{
+    public PlayerCommands commandAfterUndocking;
+    public SelectableObject DocingStation;
+    public DockingHub Hub;
+}
+
+[System.Serializable]
+public class FleetControllingFields
+{
+    public List<SelectableObject>[] fleets = new List<SelectableObject>[10];
 }

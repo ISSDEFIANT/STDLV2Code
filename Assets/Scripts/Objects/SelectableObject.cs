@@ -71,6 +71,9 @@ public class SelectableObject : MonoBehaviour
     
     private GameManager manager;
     
+    /// <summary> Текущая высота применения приказа для данного объекта. </summary>
+    public float ObjectOrdersHigh = 0;
+    
     void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color32 (127, 127, 127, 127);
@@ -110,10 +113,27 @@ public class SelectableObject : MonoBehaviour
     public void ShowSelectionEffect(float alpha)
     {
         MeshRenderer[] SelectionEffectParts = SelectionEffectObject.GetComponentsInChildren<MeshRenderer>().ToArray();
-        Color PlayerColor = manager.Players[PlayerNum - 1].PlayerColor;
+        Color PlayerColor;
+        if (PlayerNum > 0)
+        {
+            PlayerColor = manager.Players[PlayerNum - 1].PlayerColor;
+        }
+        else
+        {
+            PlayerColor = Color.gray;
+        }
 
         foreach (MeshRenderer _rp in SelectionEffectParts)
         {
+            if (alpha == 0)
+            {
+                _rp.enabled = false;
+            }
+            else
+            {
+                _rp.enabled = true;
+            }
+
             _rp.material.SetColor("_TintColor", new Color(PlayerColor.r, PlayerColor.g, PlayerColor.b, alpha));
         }
     }

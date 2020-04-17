@@ -80,7 +80,7 @@ namespace Controllers
 
         /// <summary> Прибытие в точку. </summary>
         /// <param name="target"> Координаты точки. </param>
-        public void Arrival(Vector3 target, float speed = 0f)
+        public void Arrival(Vector3 target, float speed = 0f, bool Warp = false)
         {
             Status = State.Arriving;
 
@@ -89,18 +89,31 @@ namespace Controllers
             {
                 if (speed == 0)
                 {
-                    engines.Move(target, engines.MaxSpeed);
+                    if (!Warp)
+                    {
+                        engines.Move(target, engines.MaxSpeed);
+                    }
+                    else
+                    {
+                        engines.Warp(target, engines.MaxSpeed);
+                    }
                 }
                 else
                 {
-                    engines.Move(target, speed);
+                    if (!Warp)
+                    {
+                        engines.Move(target, speed);
+                    }
+                    else
+                    {
+                        engines.Warp(target, speed);
+                    }
                 }
             }
             else
             {
                 Stop();
             }
-
         }
 
         /// <summary> Остановка. </summary>
@@ -181,12 +194,19 @@ namespace Controllers
         }
 
         /// <summary> Движение во флоте. </summary>
-        public void FleetMovement(Vector3 targetPosition, List<Mobile> fleet)
+        public void FleetMovement(Vector3 targetPosition, List<Mobile> fleet, bool Warp = false)
         {
             Status = State.MovingInFleet;
             
             float minSpeed = fleet.Select(shipGO => shipGO.GetComponent<Engines>()).Min(moveComp => moveComp.MaxSpeed);
-            engines.Move(targetPosition, minSpeed);
+            if (!Warp)
+            {
+                engines.Move(targetPosition, minSpeed);
+            }
+            else
+            {
+                engines.Warp(targetPosition, minSpeed);
+            }
         }
 
         /// <summary> Атака по паттерну Альфа </summary>

@@ -133,5 +133,13 @@ namespace Controllers
 
             return closest;
         }
+
+        public void StopFiring()
+        {
+            if (PriWea != null) PriWea.StopFiring();
+            if (SecWea != null) SecWea.StopFiring();
+            MainTarget = null;
+            Targets.Clear();
+        }
     }
 }

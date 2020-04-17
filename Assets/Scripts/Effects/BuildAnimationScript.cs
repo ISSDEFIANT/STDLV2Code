@@ -29,6 +29,7 @@ public class BuildAnimationScript : MonoBehaviour
         oldTriangles = mf.mesh.triangles.ToList();  //Запоминаем первоначальные треугольники
         
         mf.mesh.triangles = new int[0];             //Говорим мешу что у него больше нет треугольников - и вуаля, модель не видно
+        SetActive();
     }
 
     void Update()

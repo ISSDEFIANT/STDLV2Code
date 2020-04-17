@@ -171,6 +171,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -178,6 +179,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &101815146
 Transform:
   m_ObjectHideFlags: 0
@@ -243,6 +245,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -250,6 +253,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &162673969
 Transform:
   m_ObjectHideFlags: 0
@@ -337,7 +341,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 4.666e-42, y: 1.02e-43, z: -6.9e-44, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -355,6 +359,80 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 58.1, y: -30, z: 0}
+--- !u!1 &288629469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 288629471}
+  - component: {fileID: 288629470}
+  m_Layer: 0
+  m_Name: Sovereign (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &288629470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288629469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e38733d9758ae1409db3305917079ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 3
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+  moveComponent: {fileID: 0}
+  TimelyFleet: []
+  AttackProbability:
+    AlphaProbability: 0
+    BetaProbability: 0
+    GammaProbability: 0
+  Threshold: 0
+  ConstructedOnDock: 0
+--- !u!4 &288629471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288629469}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -48.5, y: 0, z: -266.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &302935162
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +484,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -413,6 +492,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &302935164
 Transform:
   m_ObjectHideFlags: 0
@@ -426,6 +506,154 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &355948758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 355948760}
+  - component: {fileID: 355948759}
+  m_Layer: 0
+  m_Name: KliBuilder (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &355948759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355948758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c8b6058ab6885d4f98f9c3cdfa20265, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 3
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+  moveComponent: {fileID: 0}
+  TimelyFleet: []
+  AttackProbability:
+    AlphaProbability: 0
+    BetaProbability: 0
+    GammaProbability: 0
+  Threshold: 0
+  ConstructedOnDock: 0
+--- !u!4 &355948760
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355948758}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -45.6, y: 10.8, z: -180.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &394682311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 394682313}
+  - component: {fileID: 394682312}
+  m_Layer: 0
+  m_Name: Sovereign (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &394682312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394682311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e38733d9758ae1409db3305917079ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 3
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+  moveComponent: {fileID: 0}
+  TimelyFleet: []
+  AttackProbability:
+    AlphaProbability: 0
+    BetaProbability: 0
+    GammaProbability: 0
+  Threshold: 0
+  ConstructedOnDock: 0
+--- !u!4 &394682313
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394682311}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -70.7, y: 26.1, z: -223.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &520245606
 GameObject:
@@ -478,6 +706,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -485,6 +714,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &520245608
 Transform:
   m_ObjectHideFlags: 0
@@ -499,6 +729,133 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!1 &523320800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 523320802}
+  - component: {fileID: 523320801}
+  m_Layer: 0
+  m_Name: PatrolLine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!120 &523320801
+LineRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523320800}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 407e16ff5c9640e43975d348fbb5916f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 3
+    numCapVertices: 1
+    alignment: 0
+    textureMode: 2
+    shadowBias: 0
+    generateLightingData: 0
+  m_UseWorldSpace: 1
+  m_Loop: 1
+--- !u!4 &523320802
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523320800}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -180.79, y: -51.587444, z: 45.17}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2081011821}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -613,6 +970,163 @@ MonoBehaviour:
   minHeight: -15
   heightDampening: 5
   scrollWheelZoomingSensitivity: -25
+--- !u!1 &556787144
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 556787146}
+  - component: {fileID: 556787145}
+  m_Layer: 0
+  m_Name: FedMiningStation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &556787145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 556787144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e360c5fee86be047a4000f364f880c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 1
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+--- !u!4 &556787146
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 556787144}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 210.7, y: 0, z: 81.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &634378357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 634378358}
+  - component: {fileID: 634378362}
+  - component: {fileID: 634378361}
+  - component: {fileID: 634378359}
+  m_Layer: 0
+  m_Name: HighGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &634378358
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634378357}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 700, y: 700, z: 700}
+  m_Children: []
+  m_Father: {fileID: 2081011821}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &634378359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634378357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a58e0bc225cca0144b1db7456c18cf66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!23 &634378361
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634378357}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 1d4d477a6f31a134ebe61160fa034e2e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &634378362
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634378357}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &636157353
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,34 +1161,66 @@ MonoBehaviour:
     race: 0
     CameraControll: {fileID: 0}
     PlayerColor: {r: 1, g: 0.9454185, b: 0, a: 0}
+    Titanium: 10000
+    Dilithium: 10000
+    Biomatter: 0
+    Crew: 10000
   - TeamNum: 1
     race: 0
     CameraControll: {fileID: 0}
     PlayerColor: {r: 0, g: 0.5216656, b: 1, a: 0}
-  - TeamNum: 1
+    Titanium: 0
+    Dilithium: 0
+    Biomatter: 0
+    Crew: 0
+  - TeamNum: 0
     race: 1
     CameraControll: {fileID: 0}
     PlayerColor: {r: 1, g: 0, b: 0.027940273, a: 0}
+    Titanium: 0
+    Dilithium: 0
+    Biomatter: 0
+    Crew: 0
   - TeamNum: 0
     race: 0
     CameraControll: {fileID: 0}
     PlayerColor: {r: 0, g: 0, b: 0, a: 0}
+    Titanium: 0
+    Dilithium: 0
+    Biomatter: 0
+    Crew: 0
   - TeamNum: 0
     race: 0
     CameraControll: {fileID: 0}
     PlayerColor: {r: 0, g: 0, b: 0, a: 0}
+    Titanium: 0
+    Dilithium: 0
+    Biomatter: 0
+    Crew: 0
   - TeamNum: 0
     race: 0
     CameraControll: {fileID: 0}
     PlayerColor: {r: 0, g: 0, b: 0, a: 0}
+    Titanium: 0
+    Dilithium: 0
+    Biomatter: 0
+    Crew: 0
   - TeamNum: 0
     race: 0
     CameraControll: {fileID: 0}
     PlayerColor: {r: 0, g: 0, b: 0, a: 0}
+    Titanium: 0
+    Dilithium: 0
+    Biomatter: 0
+    Crew: 0
   - TeamNum: 0
     race: 0
     CameraControll: {fileID: 0}
     PlayerColor: {r: 0, g: 0, b: 0, a: 0}
+    Titanium: 0
+    Dilithium: 0
+    Biomatter: 0
+    Crew: 0
   SelectableObjects: []
 --- !u!4 &636157355
 Transform:
@@ -741,6 +1287,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -748,6 +1295,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &639323245
 Transform:
   m_ObjectHideFlags: 0
@@ -774,6 +1322,7 @@ GameObject:
   - component: {fileID: 650006633}
   - component: {fileID: 650006634}
   - component: {fileID: 650006636}
+  - component: {fileID: 650006637}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -793,7 +1342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28ef8c68bade09b41aca258d42a632f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lastTab: 0
+  lastTab: 2
   movementSettingsFoldout: 0
   zoomingSettingsFoldout: 0
   rotationSettingsFoldout: 0
@@ -808,13 +1357,13 @@ MonoBehaviour:
   rotationSped: 100
   panningSpeed: 10
   mouseRotationSpeed: 100
-  autoHeight: 0
+  autoHeight: 1
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
   maxHeight: 10
   minHeight: 15
-  heightDampening: 5
+  heightDampening: -30
   keyboardZoomingSensitivity: 2
   scrollWheelZoomingSensitivity: 25
   limitMap: 0
@@ -824,7 +1373,7 @@ MonoBehaviour:
   targetOffset: {x: 0, y: 0, z: 0}
   useScreenEdgeInput: 1
   screenEdgeBorder: 25
-  useKeyboardInput: 1
+  useKeyboardInput: 0
   horizontalAxis: Horizontal
   verticalAxis: Vertical
   usePanning: 0
@@ -1090,6 +1639,95 @@ MonoBehaviour:
   SetNewCommand: 0
   LockSelection: 0
   SettingPatrolWay: 0
+  LockOnPatrolSetting: 0
+  HighGrid: {fileID: 0}
+  Flag: {fileID: 0}
+  HoveringList: {fileID: 0}
+--- !u!114 &650006637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650006632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60c60ceea1c1a0f43b6b0ddc98aa511e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Points: []
+  PointPref: {fileID: 1968283968587926, guid: a208f6463037e5945b2acc302a32d92c, type: 3}
+  PatrolLine: {fileID: 523320801}
+  player: {fileID: 650006636}
+--- !u!1 &678247574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 678247576}
+  - component: {fileID: 678247575}
+  m_Layer: 0
+  m_Name: DilitiumRock
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &678247575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 678247574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b8c5ff6e1c981408630985d49fd9a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 0
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+  curResources: 0
+  isInfinite: 0
+  type: 0
+--- !u!4 &678247576
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 678247574}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 210.7, y: 0, z: -70.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &853491117
 GameObject:
   m_ObjectHideFlags: 0
@@ -1141,6 +1779,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -1148,6 +1787,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &853491119
 Transform:
   m_ObjectHideFlags: 0
@@ -1175,7 +1815,7 @@ GameObject:
   - component: {fileID: 874905285}
   - component: {fileID: 874905284}
   m_Layer: 10
-  m_Name: Plane
+  m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1203,7 +1843,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 874905282}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 10, y: 2.220446e-16, z: 10}
@@ -1305,6 +1945,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -1312,6 +1953,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &957735738
 Transform:
   m_ObjectHideFlags: 0
@@ -1325,6 +1967,80 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1393139863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1393139865}
+  - component: {fileID: 1393139864}
+  m_Layer: 0
+  m_Name: KliBuilder (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1393139864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393139863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c8b6058ab6885d4f98f9c3cdfa20265, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 3
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+  moveComponent: {fileID: 0}
+  TimelyFleet: []
+  AttackProbability:
+    AlphaProbability: 0
+    BetaProbability: 0
+    GammaProbability: 0
+  Threshold: 0
+  ConstructedOnDock: 0
+--- !u!4 &1393139865
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393139863}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.75, y: 10.8, z: -196.19}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1445210624
 GameObject:
@@ -1377,6 +2093,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -1384,6 +2101,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &1445210626
 Transform:
   m_ObjectHideFlags: 0
@@ -1449,6 +2167,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -1456,6 +2175,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &1507669146
 Transform:
   m_ObjectHideFlags: 0
@@ -1469,6 +2189,75 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1765702106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1765702108}
+  - component: {fileID: 1765702107}
+  m_Layer: 0
+  m_Name: DilitiumRock (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1765702107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765702106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b8c5ff6e1c981408630985d49fd9a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 0
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+  curResources: 0
+  isInfinite: 0
+  type: 0
+--- !u!4 &1765702108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765702106}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 72, y: 0, z: 49.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1878252657
 GameObject:
@@ -1521,6 +2310,7 @@ MonoBehaviour:
   captain: {fileID: 0}
   rigitBody: {fileID: 0}
   ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
   moveComponent: {fileID: 0}
   TimelyFleet: []
   AttackProbability:
@@ -1528,6 +2318,7 @@ MonoBehaviour:
     BetaProbability: 0
     GammaProbability: 0
   Threshold: 0
+  ConstructedOnDock: 0
 --- !u!4 &1878252659
 Transform:
   m_ObjectHideFlags: 0
@@ -1541,6 +2332,146 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!1 &1936182923
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1936182925}
+  - component: {fileID: 1936182924}
+  m_Layer: 0
+  m_Name: FedAdvancedDrydock
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1936182924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936182923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0e3c81827353da44a8dc92a22fb20ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 1
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+--- !u!4 &1936182925
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936182923}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 210.7, y: 0, z: -29.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 22
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1982940950
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1982940952}
+  - component: {fileID: 1982940951}
+  m_Layer: 0
+  m_Name: Sovereign (9)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1982940951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982940950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e38733d9758ae1409db3305917079ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerNum: 3
+  ControllingFraction: 0
+  stationSelectionType: 0
+  selectionLock: 0
+  isHovering: 0
+  isSelected: 0
+  healthSystem: 0
+  Alerts: 0
+  _hs: {fileID: 0}
+  ObjectRadius: 0
+  SensorRange: 0
+  WeaponRange: 0
+  MaxAttackTargetCount: 0
+  ProtectionFleet: []
+  destroyed: 0
+  model: {fileID: 0}
+  modelEffects: {fileID: 0}
+  SelectionEffectObject: {fileID: 0}
+  Assimilated: 0
+  captain: {fileID: 0}
+  rigitBody: {fileID: 0}
+  ThreateningEnemyObjects: []
+  ObjectOrdersHigh: 0
+  moveComponent: {fileID: 0}
+  TimelyFleet: []
+  AttackProbability:
+    AlphaProbability: 0
+    BetaProbability: 0
+    GammaProbability: 0
+  Threshold: 0
+  ConstructedOnDock: 0
+--- !u!4 &1982940952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982940950}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -62.7, y: 1.7360225, z: -149.79999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &2081011820
 GameObject:
@@ -1570,6 +2501,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 874905283}
+  - {fileID: 634378358}
+  - {fileID: 523320802}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -26,6 +26,7 @@ public class Captain : MonoBehaviour
         FixIn,
         DeassambleIn,
         Build,
+        Undocking
     }
 
     public PlayerCommands curCommandInfo;
@@ -40,10 +41,17 @@ public class Captain : MonoBehaviour
     public SensorSS Sensors;
 
     public GunnerController Gunner;
-
     public EngineController Pilot;
+    public MiningController Miner;
 
     private float fleetStabTimer = 3;
+    private int PatrolPositionNum = 0;
+
+    public bool ToEnterPoint;
+    public bool ToStayPoint;
+    public bool ToExitPoint;
+    public SelectableObject dockingStation;
+    public DockingHub dockingHub;
 
     // Start is called before the first frame update
     void Start()
@@ -58,6 +66,11 @@ public class Captain : MonoBehaviour
         if (gameObject.GetComponent<EngineController>())
         {
             Pilot = gameObject.GetComponent<EngineController>();
+        }
+        
+        if (gameObject.GetComponent<MiningController>())
+        {
+            Miner = gameObject.GetComponent<MiningController>();
         }
     }
 
@@ -99,17 +112,23 @@ public class Captain : MonoBehaviour
                                 {
                                     if (Gunner.GetNearestTarget() != null)
                                     {
-                                        switch (ChangeAttackPattern())
+                                        if (Pilot.Status != EngineController.State.AttackingAlpha ||
+                                            Pilot.Status != EngineController.State.AttackingBeta ||
+                                            Pilot.Status != EngineController.State.AttackingGamma)
                                         {
-                                            case "Alpha":
-                                                Pilot.AttaсkAlpha(Gunner.GetNearestTarget(), Gunner);
-                                                break;
-                                            case "Beta":
-                                                Pilot.AttackBeta(Gunner.GetNearestTarget(), Gunner);
-                                                break;
-                                            case "Gamma":
-                                                Pilot.AttackGamma(Gunner.GetNearestTarget(), Gunner);
-                                                break;
+                                            float random = UnityEngine.Random.Range(0f, 1f);
+                                            switch (ChangeAttackPattern(random))
+                                            {
+                                                case "Alpha":
+                                                    Pilot.AttaсkAlpha(Gunner.GetNearestTarget(), Gunner);
+                                                    break;
+                                                case "Beta":
+                                                    Pilot.AttackBeta(Gunner.GetNearestTarget(), Gunner);
+                                                    break;
+                                                case "Gamma":
+                                                    Pilot.AttackGamma(Gunner.GetNearestTarget(), Gunner);
+                                                    break;
+                                            }
                                         }
                                     }
                                 }
@@ -154,21 +173,20 @@ public class Captain : MonoBehaviour
         }
     }
 
-    public string ChangeAttackPattern()
+    public string ChangeAttackPattern(float probability)
     {
-        float random = UnityEngine.Random.Range(0, 1);
         Mobile ow = Owner as Mobile;
-        if (random <= ow.AttackProbability.AlphaProbability)
+        if (probability <= ow.AttackProbability.AlphaProbability)
         {
             return "Alpha";
         }
 
-        if (random > ow.AttackProbability.AlphaProbability && random <= ow.AttackProbability.BetaProbability)
+        if (probability > ow.AttackProbability.AlphaProbability && probability <= ow.AttackProbability.BetaProbability)
         {
             return "Beta";
         }
 
-        if (random > ow.AttackProbability.BetaProbability && random <= ow.AttackProbability.GammaProbability)
+        if (probability > ow.AttackProbability.BetaProbability && probability <= ow.AttackProbability.GammaProbability)
         {
             return "Gamma";
         }
@@ -223,7 +241,7 @@ public class Captain : MonoBehaviour
                     pwe = _pw.efficiency;
                 }
 
-                if (_pw != null)
+                if (_sw != null)
                 {
                     swe = _sw.efficiency;
                 }
@@ -416,7 +434,7 @@ public class Captain : MonoBehaviour
                             {
                                 foreach (Mobile _s in ShipsCanFight)
                                 {
-                                    if (_s.captain.Gunner.MainTarget._hs.Shilds.Length > 0)
+                                    if (_s.captain.Gunner.MainTarget._hs.Shilds != null && _s.captain.Gunner.MainTarget._hs.Shilds.Length > 0)
                                     {
                                         if (_s.captain.Gunner.MainTarget._hs.Shilds[0].SubSystemCurHealth <= 0)
                                         {
@@ -459,7 +477,7 @@ public class Captain : MonoBehaviour
                             if (Fleet[i] == all)
                             {
                                 all.captain.tarVec = _mc.targetVec[i];
-                                all.captain.Pilot.FleetMovement(_mc.targetVec[i], Fleet);
+                                all.captain.Pilot.FleetMovement(_mc.targetVec[i], Fleet, _mc.Warp);
                             }
                         }
                     }
@@ -470,37 +488,180 @@ public class Captain : MonoBehaviour
 
     public void EnterCommand(PlayerCommands newCommand)
     {
+        UndockingCommand _uc = new UndockingCommand();
         switch (newCommand.command)
         {
             case "Move":
-                if (Gunner != null) Gunner.MainTarget = null;
-                curCommandInfo = newCommand;
-                Command = PlayerCommand.Move;
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.Move;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
                 break;
             case "Attack":
-                if (Gunner != null) Gunner.MainTarget = null;
-                curCommandInfo = newCommand;
-                Command = PlayerCommand.Attack;
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.Attack;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
                 break;
             case "Cover":
-                if (Gunner != null) Gunner.MainTarget = null;
-                curCommandInfo = newCommand;
-                Command = PlayerCommand.Cover;
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.Cover;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
                 break;
             case "Hide":
-                if (Gunner != null) Gunner.MainTarget = null;
-                curCommandInfo = newCommand;
-                Command = PlayerCommand.Hide;
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.Hide;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
                 break;
             case "FullStop":
-                if (Gunner != null) Gunner.MainTarget = null;
-                curCommandInfo = newCommand;
-                Command = PlayerCommand.FullStop;
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.FullStop;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
                 break;
             case "Guard":
-                if (Gunner != null) Gunner.MainTarget = null;
-                curCommandInfo = newCommand;
-                Command = PlayerCommand.Guard;
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.Guard;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
+                break;
+            case "Patrol":
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.Patrol;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
+                break;
+            case "Mine":
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Miner.ToBase = (curCommandInfo as MiningCommand).ToBase;
+                    Command = PlayerCommand.Mine;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
+                break;
+            case "Fixing":
+                if (!ToStayPoint && !ToExitPoint)
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    curCommandInfo = newCommand;
+                    Command = PlayerCommand.FixIn;
+                }
+                else
+                {
+                    if (Gunner != null) Gunner.StopFiring();
+                    PatrolPositionNum = 0;
+                    _uc.commandAfterUndocking = newCommand;
+                    _uc.DocingStation = dockingStation;
+                    _uc.Hub = dockingHub;
+                    curCommandInfo = _uc;
+                    Command = PlayerCommand.Undocking;
+                }
                 break;
         }
     }
@@ -509,6 +670,7 @@ public class Captain : MonoBehaviour
     {
         Mobile ow = null;
         if (Owner is Mobile) ow = Owner as Mobile;
+        GameManager _gm = FindObjectOfType<GameManager>();
         switch (Command)
         {
             case PlayerCommand.Move:
@@ -524,19 +686,19 @@ public class Captain : MonoBehaviour
                     }
                     else
                     {
-                        Pilot.Arrival(_mc.targetVec[0]);
+                        Pilot.Arrival(_mc.targetVec[0], 0, _mc.Warp);
                         tarVec = _mc.targetVec[0];
 
                         float distance = (_mc.targetVec[0] - transform.position).magnitude;
                         if (distance < 2)
                         {
-                            Command = PlayerCommand.None;      
+                            Command = PlayerCommand.None;
                         }
                     }
                 }
                 else
                 {
-                    Command = PlayerCommand.None;      
+                    Command = PlayerCommand.None;
                 }
 
                 break;
@@ -561,17 +723,23 @@ public class Captain : MonoBehaviour
                     {
                         if (_ac.attackTarget != null)
                         {
-                            switch (ChangeAttackPattern())
+                            if (Pilot.Status != EngineController.State.AttackingAlpha ||
+                                Pilot.Status != EngineController.State.AttackingBeta ||
+                                Pilot.Status != EngineController.State.AttackingGamma)
                             {
-                                case "Alpha":
-                                    Pilot.AttaсkAlpha(_ac.attackTarget, Gunner);
-                                    break;
-                                case "Beta":
-                                    Pilot.AttackBeta(_ac.attackTarget, Gunner);
-                                    break;
-                                case "Gamma":
-                                    Pilot.AttackGamma(_ac.attackTarget, Gunner);
-                                    break;
+                                float random = UnityEngine.Random.Range(0f, 1f);
+                                switch (ChangeAttackPattern(random))
+                                {
+                                    case "Alpha":
+                                        Pilot.AttaсkAlpha(_ac.attackTarget, Gunner);
+                                        break;
+                                    case "Beta":
+                                        Pilot.AttackBeta(_ac.attackTarget, Gunner);
+                                        break;
+                                    case "Gamma":
+                                        Pilot.AttackGamma(_ac.attackTarget, Gunner);
+                                        break;
+                                }
                             }
                         }
                     }
@@ -612,20 +780,26 @@ public class Captain : MonoBehaviour
                             {
                                 if (_cc.coverignShip.captain.Pilot.Status != EngineController.State.Disabled)
                                 {
-                                    switch (ChangeAttackPattern())
+                                    if (Pilot.Status != EngineController.State.AttackingAlpha ||
+                                        Pilot.Status != EngineController.State.AttackingBeta ||
+                                        Pilot.Status != EngineController.State.AttackingGamma)
                                     {
-                                        case "Alpha":
-                                            Pilot.AttaсkAlpha(_cc.ThreateningEnemyObjects, Gunner,
-                                                _cc.coverignShip.rigitBody.velocity.magnitude);
-                                            break;
-                                        case "Beta":
-                                            Pilot.AttackBeta(_cc.ThreateningEnemyObjects, Gunner,
-                                                _cc.coverignShip.rigitBody.velocity.magnitude);
-                                            break;
-                                        case "Gamma":
-                                            Pilot.AttackGamma(_cc.ThreateningEnemyObjects, Gunner,
-                                                _cc.coverignShip.rigitBody.velocity.magnitude);
-                                            break;
+                                        float random = UnityEngine.Random.Range(0f, 1f);
+                                        switch (ChangeAttackPattern(random))
+                                        {
+                                            case "Alpha":
+                                                Pilot.AttaсkAlpha(_cc.ThreateningEnemyObjects, Gunner,
+                                                    _cc.coverignShip.rigitBody.velocity.magnitude);
+                                                break;
+                                            case "Beta":
+                                                Pilot.AttackBeta(_cc.ThreateningEnemyObjects, Gunner,
+                                                    _cc.coverignShip.rigitBody.velocity.magnitude);
+                                                break;
+                                            case "Gamma":
+                                                Pilot.AttackGamma(_cc.ThreateningEnemyObjects, Gunner,
+                                                    _cc.coverignShip.rigitBody.velocity.magnitude);
+                                                break;
+                                        }
                                     }
                                 }
                                 else
@@ -689,9 +863,9 @@ public class Captain : MonoBehaviour
                 break;
             case PlayerCommand.FullStop:
                 if (Pilot != null) Pilot.Stop();
-                if (Gunner != null) Gunner.MainTarget = null;
+                if (Gunner != null) Gunner.StopFiring();
                 break;
-            
+
             case PlayerCommand.Guard:
                 GuardCommand _gc = curCommandInfo as GuardCommand;
                 if (_gc.guardTarget.destroyed)
@@ -700,20 +874,26 @@ public class Captain : MonoBehaviour
                     curCommandInfo = null;
                     return;
                 }
-                
+
                 if (Gunner != null)
                 {
-                    if (_gc.guardTarget.ThreateningEnemyObjects != null && _gc.guardTarget.ThreateningEnemyObjects.Count > 0)
+                    if (_gc.guardTarget.ThreateningEnemyObjects != null &&
+                        _gc.guardTarget.ThreateningEnemyObjects.Count > 0)
                     {
-                        if (Gunner != null) Gunner.MainTarget = STMethods.NearestSelObj(_gc.guardTarget, _gc.guardTarget.ThreateningEnemyObjects);
+                        if (Gunner != null)
+                            Gunner.MainTarget = STMethods.NearestSelObj(_gc.guardTarget,
+                                _gc.guardTarget.ThreateningEnemyObjects);
                         tarSelObj = Gunner.MainTarget;
                     }
                 }
 
                 if (Pilot != null)
                 {
-                    if(!_gc.guardTarget.ProtectionFleet.Any(x => x == Owner))_gc.guardTarget.ProtectionFleet.Add(Owner as Mobile);
-                    if(Owner.destroyed)if(_gc.guardTarget.ProtectionFleet.Any(x => x == Owner))_gc.guardTarget.ProtectionFleet.Remove(Owner as Mobile);
+                    if (!_gc.guardTarget.ProtectionFleet.Any(x => x == Owner))
+                        _gc.guardTarget.ProtectionFleet.Add(Owner as Mobile);
+                    if (Owner.destroyed)
+                        if (_gc.guardTarget.ProtectionFleet.Any(x => x == Owner))
+                            _gc.guardTarget.ProtectionFleet.Remove(Owner as Mobile);
                     foreach (Mobile all in _gc.guardTarget.ProtectionFleet)
                     {
                         if (all.captain.Pilot.Status != EngineController.State.Disabled)
@@ -725,14 +905,500 @@ public class Captain : MonoBehaviour
                                     all.captain.tarVec = _gc.fleetPattern[i];
                                     float maxRad = STMethods.MaxRadiusInFleet(_gc.guardTarget.ProtectionFleet) *
                                                    (2 + (_gc.guardTarget.ProtectionFleet.Count / 16));
-                                    Vector3 point = _gc.guardTarget.transform.position + (_gc.guardTarget.transform.rotation * new Vector3(_gc.fleetPattern[i].x * maxRad,_gc.fleetPattern[i].y * maxRad, _gc.fleetPattern[i].z * maxRad));
+                                    Vector3 point = _gc.guardTarget.transform.position +
+                                                    (_gc.guardTarget.transform.rotation *
+                                                     new Vector3(_gc.fleetPattern[i].x * maxRad,
+                                                         _gc.fleetPattern[i].y * maxRad,
+                                                         _gc.fleetPattern[i].z * maxRad));
                                     all.captain.Pilot.FleetMovement(point, _gc.guardTarget.ProtectionFleet);
                                 }
                             }
                         }
                     }
                 }
+
                 break;
+            case PlayerCommand.Patrol:
+                if (Pilot == null)
+                {
+                    Command = PlayerCommand.None;
+                    curCommandInfo = null;
+                    return;
+                }
+
+                PatrolCommand _pc = curCommandInfo as PatrolCommand;
+                if (_pc.targetVec.Count > 0)
+                {
+                    if (Vector3.Distance(_pc.targetVec[PatrolPositionNum], transform.position) >
+                        Pilot.engines.DistanceToFullStop(Pilot.engines.Acceleration) + Pilot.engines.Threshold)
+                    {
+                        Pilot.Arrival(_pc.targetVec[PatrolPositionNum]);
+                    }
+                    else
+                    {
+                        if (PatrolPositionNum < _pc.targetVec.Count - 1)
+                        {
+                            PatrolPositionNum++;
+                        }
+                        else
+                        {
+                            PatrolPositionNum = 0;
+                        }
+                    }
+                }
+
+                if (Gunner != null) Gunner.OpenFireAtNearestEnemy();
+                break;
+            case PlayerCommand.Mine:
+                if (Pilot == null)
+                {
+                    Command = PlayerCommand.None;
+                    curCommandInfo = null;
+                    return;
+                }
+
+                MiningCommand _mic = curCommandInfo as MiningCommand;
+                if (Miner.ToBase)
+                {
+                    if (_mic.UnloadPoint != null)
+                    {
+                        if (_mic.UnloadPoint.destroyed) _mic.UnloadPoint = null;
+                        MinerDocking(_mic.UnloadPoint.GetComponent<ResourceUnloadingController>());
+                    }
+                    else
+                    {
+                        List<SelectableObject> UnloadPointsList = new List<SelectableObject>();
+                        for (int i = 0; i < _gm.SelectableObjects.Count; i++)
+                        {
+                            if (_gm.SelectableObjects[i].GetComponent<ResourceUnloadingController>() &&
+                                _gm.SelectableObjects[i].PlayerNum == Owner.PlayerNum)
+                            {
+                                UnloadPointsList.Add(_gm.SelectableObjects[i]);
+                            }
+                        }
+
+                        if (UnloadPointsList.Count == 0) return;
+                        SelectableObject Nearest = STMethods.NearestSelObj(Owner, UnloadPointsList);
+
+                        MinerDocking(Nearest.GetComponent<ResourceUnloadingController>());
+                    }
+                }
+                else
+                {
+                    if (Miner.curResources <= Miner.MaxResources)
+                    {
+                        if (_mic.ResTar != null)
+                        {
+                            if (_mic.ResTar.curResources > 0)
+                            {
+                                MinerMining(_mic.ResTar);
+                            }
+                            else
+                            {
+                                _mic.ResTar = null;
+                            }
+                        }
+                        else
+                        {
+                            List<SelectableObject> ResourceSourceList = new List<SelectableObject>();
+                            for (int i = 0; i < _gm.SelectableObjects.Count; i++)
+                            {
+                                if (_gm.SelectableObjects[i].GetComponent<ResourceSource>() &&
+                                    _gm.SelectableObjects[i].GetComponent<ResourceSource>().type ==
+                                    Miner.curResourcesType && _gm.SelectableObjects[i].GetComponent<ResourceSource>()
+                                        .curResources > 0)
+                                {
+                                    ResourceSourceList.Add(_gm.SelectableObjects[i]);
+                                }
+                            }
+
+                            if (ResourceSourceList.Count == 0) return;
+                            SelectableObject Nearest = STMethods.NearestSelObj(Owner, ResourceSourceList);
+
+                            MinerMining(Nearest.GetComponent<ResourceSource>());
+                        }
+                    }
+                    else
+                    {
+                        Miner.curResources = Miner.MaxResources;
+                        Miner.ToBase = true;
+                    }
+                }
+
+                break;
+            case PlayerCommand.Undocking:
+                UndockingCommand _uc = curCommandInfo as UndockingCommand;
+
+                Vector3 stayPoint = _uc.DocingStation.transform.position +
+                                    (_uc.DocingStation.transform.rotation * _uc.Hub.StayPoint);
+                Vector3 exitPoint = _uc.DocingStation.transform.position +
+                                    (_uc.DocingStation.transform.rotation * _uc.Hub.ExitPoint);
+                if (ToStayPoint)
+                {
+                    if (Vector3.Distance(transform.position, stayPoint) > Pilot.engines.Threshold)
+                    {
+                        Vector3 targetDir = stayPoint - transform.position;
+                        float angle = Vector3.Angle(targetDir, transform.forward);
+
+                        if (angle < 2)
+                        {
+                            Pilot.Arrival(stayPoint);
+                        }
+                        else
+                        {
+                            Pilot.engines.RotateShip(Quaternion.LookRotation(targetDir));
+                        }
+                    }
+                    else
+                    {
+                        ToExitPoint = true;
+                        ToStayPoint = false;
+                    }
+                }
+
+                if (ToExitPoint)
+                {
+                    if (Vector3.Distance(transform.position, exitPoint) > Pilot.engines.Threshold)
+                    {
+                        Vector3 targetDir = exitPoint - transform.position;
+                        float angle = Vector3.Angle(targetDir, transform.forward);
+
+                        if (angle < 2)
+                        {
+                            Pilot.Arrival(exitPoint);
+                        }
+                        else
+                        {
+                            Pilot.engines.RotateShip(Quaternion.LookRotation(targetDir));
+                        }
+                    }
+                    else
+                    {
+                        ToExitPoint = false;
+
+                        EnterCommand(_uc.commandAfterUndocking);
+                    }
+                }
+
+                break;
+            case PlayerCommand.FixIn:
+                if (Pilot == null)
+                {
+                    Command = PlayerCommand.None;
+                    curCommandInfo = null;
+                    return;
+                }
+
+                FixingCommand _fc = curCommandInfo as FixingCommand;
+
+                if (_fc.FixingPoint != null)
+                {
+                    if (_fc.FixingPoint.destroyed) _fc.FixingPoint = null;
+                    FixingDocking(_fc.FixingPoint.GetComponent<FixingPointController>());
+                }
+                else
+                {
+                    List<SelectableObject> FixingPointsList = new List<SelectableObject>();
+                    for (int i = 0; i < _gm.SelectableObjects.Count; i++)
+                    {
+                        if (_gm.SelectableObjects[i].GetComponent<FixingPointController>() &&
+                            _gm.SelectableObjects[i].PlayerNum == Owner.PlayerNum)
+                        {
+                            FixingPointsList.Add(_gm.SelectableObjects[i]);
+                        }
+                    }
+
+                    if (FixingPointsList.Count == 0) return;
+                    SelectableObject Nearest = STMethods.NearestSelObj(Owner, FixingPointsList);
+
+                    FixingDocking(Nearest.GetComponent<FixingPointController>());
+                }
+
+                break;
+        }
+    }
+
+    public void MinerDocking(ResourceUnloadingController _tarUC)
+    {
+        GameManager _gm = FindObjectOfType<GameManager>();
+
+        _tarUC.DockingCall(Owner as Mobile);
+
+        if (_tarUC.AwaitingShipsOnHub.Any(x => x == Owner))
+        {
+            for (int i = 0; i < _tarUC.AwaitingShipsOnHub.Count; i++)
+            {
+                if (_tarUC.AwaitingShipsOnHub[i] == Owner)
+                {
+                    Vector3 awaitingPoint = _tarUC.WaitingPoints()[i];
+                    if (Vector3.Distance(transform.position, awaitingPoint) > Pilot.engines.Threshold)
+                    {
+                        Pilot.Arrival(awaitingPoint);
+                    }
+                    else
+                    {
+                        Vector3 targetDir = _tarUC.AwaitingPoint - transform.position;
+                        Pilot.engines.RotateShip(targetDir);
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < _tarUC.HubCount; i++)
+            {
+                if (_tarUC.HubSS.Hubs[i].EnteringShip == Owner)
+                {
+                    Vector3 enterPoint = _tarUC.transform.position +
+                                         (_tarUC.transform.rotation * _tarUC.HubSS.Hubs[i].EnterPoint);
+                    Vector3 stayPoint = _tarUC.transform.position +
+                                        (_tarUC.transform.rotation * _tarUC.HubSS.Hubs[i].StayPoint);
+                    Vector3 exitPoint = _tarUC.transform.position +
+                                        (_tarUC.transform.rotation * _tarUC.HubSS.Hubs[i].ExitPoint);
+                    if (!ToEnterPoint && !ToStayPoint && !ToExitPoint)
+                    {
+                        Pilot.Arrival(enterPoint);
+                        ToEnterPoint = true;
+                    }
+
+                    if (ToEnterPoint)
+                    {
+                        if (Vector3.Distance(transform.position, enterPoint) > Pilot.engines.Threshold)
+                        {
+                            Pilot.Arrival(enterPoint);
+                            ToEnterPoint = true;
+                        }
+                        else
+                        {
+                            ToStayPoint = true;
+                            ToEnterPoint = false;
+                        }
+                    }
+
+                    if (ToStayPoint)
+                    {
+                        if(dockingStation != _tarUC.HubSS.Owner) dockingStation = _tarUC.HubSS.Owner;
+                        if(dockingHub != _tarUC.HubSS.Hubs[i]) dockingHub = _tarUC.HubSS.Hubs[i];
+                        
+                        if (Vector3.Distance(transform.position, stayPoint) > Pilot.engines.Threshold)
+                        {
+                            Vector3 targetDir = stayPoint - transform.position;
+                            float angle = Vector3.Angle(targetDir, transform.forward);
+
+                            if (angle < 2)
+                            {
+                                Pilot.Arrival(stayPoint);
+                            }
+                            else
+                            {
+                                Pilot.engines.RotateShip(Quaternion.LookRotation(targetDir));
+                            }
+                        }
+                        else
+                        {
+                            if (Miner.curResources > 0)
+                            {
+                                switch (Miner.curResourcesType)
+                                {
+                                    case STMethods.ResourcesType.Titanium:
+                                        _gm.Players[Owner.PlayerNum - 1].Titanium += Time.deltaTime * 10;
+                                        break;
+                                    case STMethods.ResourcesType.Dilithium:
+                                        _gm.Players[Owner.PlayerNum - 1].Dilithium += Time.deltaTime * 10;
+                                        break;
+                                    case STMethods.ResourcesType.Biomatter:
+                                        _gm.Players[Owner.PlayerNum - 1].Biomatter += Time.deltaTime * 10;
+                                        break;
+                                }
+
+                                Miner.curResources -= Time.deltaTime * 10;
+                            }
+                            else
+                            {
+                                Miner.curResources = 0;
+
+                                ToExitPoint = true;
+                                ToStayPoint = false;
+                            }
+                        }
+                    }
+
+                    if (ToExitPoint)
+                    {
+                        if(dockingStation != _tarUC.HubSS.Owner) dockingStation = _tarUC.HubSS.Owner;
+                        if(dockingHub != _tarUC.HubSS.Hubs[i]) dockingHub = _tarUC.HubSS.Hubs[i];
+                        
+                        if (Vector3.Distance(transform.position, exitPoint) > Pilot.engines.Threshold)
+                        {
+                            Vector3 targetDir = exitPoint - transform.position;
+                            float angle = Vector3.Angle(targetDir, transform.forward);
+
+                            if (angle < 2)
+                            {
+                                Pilot.Arrival(exitPoint);
+                            }
+                            else
+                            {
+                                Pilot.engines.RotateShip(Quaternion.LookRotation(targetDir));
+                            }
+                        }
+                        else
+                        {
+                            ToExitPoint = false;
+                            Miner.ToBase = false;
+                            
+                            dockingStation = null;
+                            dockingHub = null;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void MinerMining(ResourceSource ResTar)
+    {
+        if (Miner.curResourcesType != ResTar.type)
+        {
+            Miner.curResources = 0;
+            Miner.curResourcesType = ResTar.type;
+        }
+        float radius = Owner.ObjectRadius+ResTar.ObjectRadius+Owner.WeaponRange*0.75f;
+        Pilot.Orbiting(ResTar, radius);
+
+        if (Vector3.Distance(transform.position, ResTar.transform.position) <= (Owner.ObjectRadius+ResTar.ObjectRadius+Owner.WeaponRange))
+        {
+            Miner.Mine(ResTar);
+        }
+    }
+    
+    public void FixingDocking(FixingPointController _tarFC)
+    {
+        GameManager _gm = FindObjectOfType<GameManager>();
+
+        _tarFC.DockingCall(Owner as Mobile);
+
+        if (_tarFC.AwaitingShipsOnHub.Any(x => x == Owner))
+        {
+            for (int i = 0; i < _tarFC.AwaitingShipsOnHub.Count; i++)
+            {
+                if (_tarFC.AwaitingShipsOnHub[i] == Owner)
+                {
+                    Vector3 awaitingPoint = _tarFC.WaitingPoints()[i];
+                    if (Vector3.Distance(transform.position, awaitingPoint) > Pilot.engines.Threshold)
+                    {
+                        Pilot.Arrival(awaitingPoint);
+                    }
+                    else
+                    {
+                        Vector3 targetDir = _tarFC.AwaitingPoint - transform.position;
+                        Pilot.engines.RotateShip(targetDir);
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < _tarFC.HubCount; i++)
+            {
+                if (_tarFC.HubSS.Hubs[i].EnteringShip == Owner)
+                {
+                    Vector3 enterPoint = _tarFC.transform.position +
+                                         (_tarFC.transform.rotation * _tarFC.HubSS.Hubs[i].EnterPoint);
+                    Vector3 stayPoint = _tarFC.transform.position +
+                                        (_tarFC.transform.rotation * _tarFC.HubSS.Hubs[i].StayPoint);
+                    Vector3 exitPoint = _tarFC.transform.position +
+                                        (_tarFC.transform.rotation * _tarFC.HubSS.Hubs[i].ExitPoint);
+                    if (!ToEnterPoint && !ToStayPoint && !ToExitPoint)
+                    {
+                        Pilot.Arrival(enterPoint);
+                        ToEnterPoint = true;
+                    }
+
+                    if (ToEnterPoint)
+                    {
+                        if (Vector3.Distance(transform.position, enterPoint) > Pilot.engines.Threshold)
+                        {
+                            Pilot.Arrival(enterPoint);
+                            ToEnterPoint = true;
+                        }
+                        else
+                        {
+                            ToStayPoint = true;
+                            ToEnterPoint = false;
+                        }
+                    }
+
+                    if (ToStayPoint)
+                    {
+                        if(dockingStation != _tarFC.HubSS.Owner) dockingStation = _tarFC.HubSS.Owner;
+                        if(dockingHub != _tarFC.HubSS.Hubs[i]) dockingHub = _tarFC.HubSS.Hubs[i];
+                        
+                        if (Vector3.Distance(transform.position, stayPoint) > Pilot.engines.Threshold)
+                        {
+                            Vector3 targetDir = stayPoint - transform.position;
+                            float angle = Vector3.Angle(targetDir, transform.forward);
+
+                            if (angle < 2)
+                            {
+                                Pilot.Arrival(stayPoint);
+                            }
+                            else
+                            {
+                                Pilot.engines.RotateShip(Quaternion.LookRotation(targetDir));
+                            }
+                        }
+                        else
+                        {
+                            if (Owner._hs.NeedFix())
+                            {
+                                Owner._hs.Fixing();
+                            }
+                            else
+                            {
+                                ToExitPoint = true;
+                                ToStayPoint = false;
+                            }
+                        }
+                    }
+
+                    if (ToExitPoint)
+                    {
+                        if(dockingStation != _tarFC.HubSS.Owner) dockingStation = _tarFC.HubSS.Owner;
+                        if(dockingHub != _tarFC.HubSS.Hubs[i]) dockingHub = _tarFC.HubSS.Hubs[i];
+                        
+                        if (Vector3.Distance(transform.position, exitPoint) > Pilot.engines.Threshold)
+                        {
+                            Vector3 targetDir = exitPoint - transform.position;
+                            float angle = Vector3.Angle(targetDir, transform.forward);
+
+                            if (angle < 2)
+                            {
+                                Pilot.Arrival(exitPoint);
+                            }
+                            else
+                            {
+                                Pilot.engines.RotateShip(Quaternion.LookRotation(targetDir));
+                            }
+                        }
+                        else
+                        {
+                            ToExitPoint = false;
+                            
+                            MoveCommand _nmc = new MoveCommand();
+                            _nmc.command = "Move";
+                            _nmc.targetVec = new List<Vector3>(); 
+                            _nmc.targetVec.Add(dockingStation.GetComponent<FixingPointController>().ExitFlag.ExitFlag);
+                            _nmc.Warp = false;
+                            
+                            EnterCommand(_nmc);
+                            
+                            dockingStation = null;
+                            dockingHub = null;
+                        }
+                    }
+                }
+            }
         }
     }
 }

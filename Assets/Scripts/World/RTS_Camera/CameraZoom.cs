@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraZoom : MonoBehaviour
 {
-private float zoomPos = 0; 
+private float zoomPos = -50; 
 public float maxHeight = 10f; //maximal height
 public float minHeight = 15f; //minimnal height
 public float heightDampening = 5f; 

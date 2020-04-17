@@ -23,10 +23,20 @@ public class Shell : MonoBehaviour
     private float MaxFuild;
     /// <summary> Эффект взрыва снаряда. </summary>
     public GameObject ExplosionEffect;
+    /// <summary> Звук выстрела. </summary>
+    public AudioClip FireSound;
+    /// <summary> Звук попадания в щит. </summary>
+    public AudioClip ShieldHit;
+    /// <summary> Звук попадания в корпус. </summary>
+    public AudioClip HullHit;
+
+    private AudioSource _as;
 
     /// <summary> Первая установка топлива. </summary>
     void Awake()
     {
+        if(gameObject.GetComponent<AudioSource>())
+        _as = gameObject.GetComponent<AudioSource>();
         MaxFuild = Fuild;
     }
 
@@ -60,7 +70,26 @@ public class Shell : MonoBehaviour
                 {
                     if (coll.GetComponent<HealthSystem>())
                     {
-                        coll.GetComponent<HealthSystem>().ApplyDamage(damage, attackType,transform.forward * moveSpeed);
+                        HealthSystem _TarHS = coll.GetComponent<HealthSystem>();
+                        _TarHS.ApplyDamage(damage, attackType,transform.forward * moveSpeed);
+                        if (_TarHS.Shilds.Length > 0)
+                        {
+                            if (_TarHS.Shilds[0].SubSystemCurHealth <= 0)
+                            {
+                                _as.clip = HullHit;
+                                _as.Play();
+                            }
+                            else
+                            {
+                                _as.clip = ShieldHit;
+                                _as.Play();
+                            }
+                        }
+                        else
+                        {
+                            _as.clip = HullHit;
+                            _as.Play();
+                        }
                     }
 
                     Instantiate(ExplosionEffect, transform.position, transform.rotation);
@@ -79,5 +108,11 @@ public class Shell : MonoBehaviour
         DiactivateObject _d = gameObject.GetComponent<DiactivateObject>();
         Fuild = MaxFuild;
         _d.Diactivate();
+    }
+
+    public void PlayFireSound()
+    {
+        _as.clip = FireSound;
+        _as.Play();
     }
 }

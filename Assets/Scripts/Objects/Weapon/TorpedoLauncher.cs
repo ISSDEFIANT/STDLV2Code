@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Modules;
 using UnityEngine;
 
 public class TorpedoLauncher : MonoBehaviour
@@ -216,6 +215,7 @@ public class TorpedoLauncher : MonoBehaviour
                 _s.attackType = AimingTarget;
                 _s.collisionDelay = collisionDelay;
                 _s.target = Target.transform;
+                _s.PlayFireSound();
                 break;
             }
         }
