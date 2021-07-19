@@ -43,24 +43,33 @@ public class MiningController : MonoBehaviour
 
     public void Mine(ResourceSource Target)
     {
-        if (curResources > 0)
+        if (curResourcesType == STMethods.ResourcesType.Titanium)
         {
-            if (Target.type != curResourcesType) return;
-        }
-        else
-        {
-            curResourcesType = Target.type;
-        }
-        if (Target.curResources > 0 && curResources < MaxResources && curResourcesType == Target.type)
-        {
-            if (!Target.isInfinite)
+            if (Target.curTitanium > 0 && curResources < MaxResources)
             {
-                Target.curResources -= Time.deltaTime * 10;
-            }
+                if (!Target.isInfinite)
+                {
+                    Target.curTitanium -= Time.deltaTime * 10;
+                }
 
-            curResources += Time.deltaTime * 10;
+                curResources += Time.deltaTime * 10;
             
-            System.ActiveBeam(Target.transform);
+                System.ActiveBeam(Target.transform);
+            }   
+        }
+        if (curResourcesType == STMethods.ResourcesType.Dilithium)
+        {
+            if (Target.curDilithium > 0 && curResources < MaxResources)
+            {
+                if (!Target.isInfinite)
+                {
+                    Target.curDilithium -= Time.deltaTime * 10;
+                }
+
+                curResources += Time.deltaTime * 10;
+            
+                System.ActiveBeam(Target.transform);
+            }   
         }
     }
 }

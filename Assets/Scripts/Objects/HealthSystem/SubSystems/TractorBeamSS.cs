@@ -5,9 +5,9 @@ using UnityEngine;
 public class TractorBeamSS : SubSystem
 {
     // Start is called before the first frame update
-    void Start()
+    public override void isCreated()
     {
-        
+        Owner.effectManager.tractorBeam = this;
     }
 
     // Update is called once per frame

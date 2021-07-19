@@ -1,14 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.UI;
 
 public class CameraZoom : MonoBehaviour
 {
-private float zoomPos = -50; 
+private float zoomPos = 0; 
 public float maxHeight = 10f; //maximal height
 public float minHeight = 15f; //minimnal height
-public float heightDampening = 5f; 
-public float scrollWheelZoomingSensitivity = 25f;
+public float heightDampening = 5f;
+private float scrollWheelZoomingSensitivity;
+public float scrollWheelZoomingSensitivityMin = -1f;
+public float scrollWheelZoomingSensitivityMax = -25f;
 
     // Start is called before the first frame update
     void Start()
@@ -19,12 +24,33 @@ public float scrollWheelZoomingSensitivity = 25f;
     // Update is called once per frame
     void Update()
     {
+        scrollWheelZoomingSensitivity = Mathf.Lerp(scrollWheelZoomingSensitivityMin,
+            scrollWheelZoomingSensitivityMax,
+            transform.localPosition.z / maxHeight);
+
         HeightCalculation();
     }
     
     private float ScrollWheel
     {
-        get { return Input.GetAxis("Mouse ScrollWheel"); }
+        get
+        {
+            if (Input.GetKey(KeyCode.LeftShift)) return 0;
+            if (Input.GetKey(KeyCode.LeftAlt))
+            {
+                float X;
+                float Y;
+                X = Screen.width / 100;
+                Y = Screen.height / 100;
+
+                if (Input.mousePosition.y < Y * 25 & Input.mousePosition.y > Y * 0 & Input.mousePosition.x < X * 14 &
+                    Input.mousePosition.x > X * 0)
+                {
+                    return 0;
+                }
+            }
+            return Input.GetAxis("Mouse ScrollWheel");
+        }
     }
     
     private void HeightCalculation()

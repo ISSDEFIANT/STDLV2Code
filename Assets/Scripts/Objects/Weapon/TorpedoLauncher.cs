@@ -6,8 +6,11 @@ using UnityEngine;
 
 public class TorpedoLauncher : MonoBehaviour
 {
-    /// <summary> Подсистема, влияющая на орудие. </summary>
-    public SecondaryWeaponSS NecessarySystem;
+    public bool ImpulsPhaser;
+    /// <summary> Подсистема, влияющая на орудие (первичное). </summary>
+    public PrimaryWeaponSS PriNecessarySystem;
+    /// <summary> Подсистема, влияющая на орудие (вторичное). </summary>
+    public SecondaryWeaponSS SecNecessarySystem;
 
     /// <summary> Прицеливание. </summary>
     public STMethods.AttackType AimingTarget;
@@ -15,14 +18,11 @@ public class TorpedoLauncher : MonoBehaviour
     /// <summary> Торпеда (снаряд). </summary>
     public GameObject shell;
 
-    /// <summary> Время до активации коллизии. </summary>
-    public float collisionDelay;
-
     /// <summary> Максимальное количество торпед (снарядов). </summary>
     public int maxTorpidos;
 
     /// <summary> Текущее количество торпед (снарядов). </summary>
-    [HideInInspector] public int curTorpidos;
+    public int curTorpidos;
 
     /// <summary> Задержка между выстрелами. </summary>
     public float TorpedoRange = 1;
@@ -34,7 +34,7 @@ public class TorpedoLauncher : MonoBehaviour
     public float ReloadTime;
 
     /// <summary> Текущее время перезарядки залпа. </summary>
-    [HideInInspector] public float curReloadTime;
+    public float curReloadTime;
 
     /// <summary> Блокировка орудий в градусной системе. </summary>
     public FireDegreesLockSystem DegreesLocking;
@@ -51,17 +51,36 @@ public class TorpedoLauncher : MonoBehaviour
     /// <summary> Производится ли перезарядка. </summary>
     private bool Reloading;
 
+    /// <summary> Звук для импульсных фазеров. </summary>
+    private AudioSource impulseWeaponSound;
+
+    public bool useParentForwardVector;
+    public bool useParentBackVector;
+
     /// <summary> Орудие активно. </summary>
     public void Active(SelectableObject target, STMethods.AttackType aiming)
     {
         AimingTarget = aiming;
 
-        if (NecessarySystem != null)
+        if (ImpulsPhaser)
         {
-            if (NecessarySystem.efficiency < 0.1f)
+            if (PriNecessarySystem != null)
             {
-                return;
+                if (PriNecessarySystem.Owner.effectManager.PrimaryWeaponFireReload(ReloadTime) == 0)
+                {
+                    return;
+                }
             }
+        }
+        else
+        {
+            if (SecNecessarySystem != null)
+            {
+                if (SecNecessarySystem.Owner.effectManager.SecondaryWeaponFireReload(ReloadTime) == 0)
+                {
+                    return;
+                }
+            }   
         }
 
         FireCheck(target);
@@ -73,7 +92,7 @@ public class TorpedoLauncher : MonoBehaviour
         if (SeeTarget(target.transform))
         {
             Target = target;
-            RotateOnTarget(Target.transform);
+            RotateOnTarget(Target.transform, Target.rigitBody);
         }
         else
         {
@@ -82,13 +101,20 @@ public class TorpedoLauncher : MonoBehaviour
     }
 
     /// <summary> Разворот на цель. </summary>
-    void RotateOnTarget(Transform target)
+    void RotateOnTarget(Transform target, Rigidbody rigitbody = null)
     {
         if (target != null)
         {
-            Vector3 LookVector = (target.transform.position - this.transform.position);
-            this.transform.rotation =
-                Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(LookVector), 360);
+            Vector3 LookVector;
+            if (rigitbody == null)
+            {
+                LookVector = (target.transform.position - gameObject.transform.position);
+            }
+            else
+            {
+                LookVector = (target.transform.position+rigitbody.velocity - gameObject.transform.position);   
+            }
+            gameObject.transform.rotation = Quaternion.Slerp(gameObject.transform.rotation, Quaternion.LookRotation(LookVector), 360);
 
         }
     }
@@ -102,8 +128,8 @@ public class TorpedoLauncher : MonoBehaviour
 
         if (DegreesLocking.InvertX && !DegreesLocking.InvertY)
         {
-            if ((_lv.x < DegreesLocking.MinX || _lv.x > DegreesLocking.MaxX) && _lv.y > DegreesLocking.MinY &&
-                _lv.y < DegreesLocking.MaxY)
+            if ((_lv.x <= DegreesLocking.MinX || _lv.x >= DegreesLocking.MaxX) && _lv.y >= DegreesLocking.MinY &&
+                _lv.y <= DegreesLocking.MaxY)
             {
                 return true;
             }
@@ -113,8 +139,8 @@ public class TorpedoLauncher : MonoBehaviour
 
         if (DegreesLocking.InvertY && !DegreesLocking.InvertX)
         {
-            if (_lv.x > DegreesLocking.MinX && _lv.x < DegreesLocking.MaxX &&
-                (_lv.y < DegreesLocking.MinY || _lv.y > DegreesLocking.MaxY))
+            if (_lv.x >= DegreesLocking.MinX && _lv.x <= DegreesLocking.MaxX &&
+                (_lv.y <= DegreesLocking.MinY || _lv.y >= DegreesLocking.MaxY))
             {
                 return true;
             }
@@ -124,8 +150,8 @@ public class TorpedoLauncher : MonoBehaviour
 
         if (DegreesLocking.InvertX && DegreesLocking.InvertY)
         {
-            if ((_lv.x < DegreesLocking.MinX || _lv.x > DegreesLocking.MaxX) &&
-                (_lv.y < DegreesLocking.MinY || _lv.y > DegreesLocking.MaxY))
+            if ((_lv.x <= DegreesLocking.MinX || _lv.x >= DegreesLocking.MaxX) &&
+                (_lv.y <= DegreesLocking.MinY || _lv.y >= DegreesLocking.MaxY))
             {
                 return true;
             }
@@ -135,8 +161,8 @@ public class TorpedoLauncher : MonoBehaviour
 
         if (!DegreesLocking.InvertX && !DegreesLocking.InvertY)
         {
-            if (_lv.x > DegreesLocking.MinX && _lv.x < DegreesLocking.MaxX && _lv.y > DegreesLocking.MinY &&
-                _lv.y < DegreesLocking.MaxY)
+            if (_lv.x >= DegreesLocking.MinX && _lv.x <= DegreesLocking.MaxX && _lv.y >= DegreesLocking.MinY &&
+                _lv.y <= DegreesLocking.MaxY)
             {
                 return true;
             }
@@ -150,6 +176,14 @@ public class TorpedoLauncher : MonoBehaviour
     /// <summary> Процесс атаки. </summary>
     void Attacking()
     {
+        if (ImpulsPhaser)
+        {
+            if(PriNecessarySystem.Owner.effectManager.PrimaryWeaponFireReload(ReloadTime) == 0) return;
+        }
+        else
+        {
+            if(SecNecessarySystem.Owner.effectManager.SecondaryWeaponFireReload(ReloadTime) == 0) return;
+        }
         if (curTorpidos > 0)
         {
             if (curTorpedoRange <= 0)
@@ -161,27 +195,57 @@ public class TorpedoLauncher : MonoBehaviour
                 curTorpedoRange = TorpedoRange;
 
                 Target = null;
-                NecessarySystem.DeleteFromTargetList(Target);
-            }
-            else
-            {
-                if (NecessarySystem != null)
+                if (ImpulsPhaser)
                 {
-                    curTorpedoRange -= Time.deltaTime * NecessarySystem.efficiency;
+                    PriNecessarySystem.DeleteFromTargetList(Target);
                 }
                 else
                 {
-                    curTorpedoRange -= Time.deltaTime;
+                    SecNecessarySystem.DeleteFromTargetList(Target);
                 }
             }
+            else
+            {
+                if (ImpulsPhaser)
+                {
+                    if (PriNecessarySystem != null)
+                    {
+                        curTorpedoRange -= Time.deltaTime * PriNecessarySystem.efficiency;
+                    }
+                    else
+                    {
+                        curTorpedoRange -= Time.deltaTime;
+                    }
+                }
+                else
+                {
+                    if (SecNecessarySystem != null)
+                    {
+                        curTorpedoRange -= Time.deltaTime * SecNecessarySystem.efficiency;
+                    }
+                    else
+                    {
+                        curTorpedoRange -= Time.deltaTime;
+                    }
+                }
+            }
+            if(impulseWeaponSound != null && !impulseWeaponSound.isPlaying)impulseWeaponSound.Play();
         }
         else
         {
             if (curReloadTime <= 0)
             {
-                curReloadTime = ReloadTime;
+                if (ImpulsPhaser)
+                {
+                    curReloadTime = PriNecessarySystem.Owner.effectManager.PrimaryWeaponFireReload(ReloadTime);
+                }
+                else
+                {
+                    curReloadTime = SecNecessarySystem.Owner.effectManager.SecondaryWeaponFireReload(ReloadTime);   
+                }
                 Reloading = true;
             }
+            if(impulseWeaponSound != null && impulseWeaponSound.isPlaying)impulseWeaponSound.Stop();
         }
     }
 
@@ -198,6 +262,8 @@ public class TorpedoLauncher : MonoBehaviour
             AllTorpedose[i] = Instantiate(shell) as GameObject;
             AllTorpedose[i].SetActive(false);
         }
+
+        if (gameObject.GetComponent<AudioSource>()) impulseWeaponSound = gameObject.GetComponent<AudioSource>();
     }
 
     /// <summary> Активация торпед (снарядов). </summary>
@@ -207,15 +273,34 @@ public class TorpedoLauncher : MonoBehaviour
         {
             if (AllTorpedose[i].activeInHierarchy == false)
             {
+                Shell _s = AllTorpedose[i].GetComponent<Shell>();
+                _s.attackType = AimingTarget;
+
+                _s.target = Target;
+                if (ImpulsPhaser)
+                {
+                    _s.owner = PriNecessarySystem.Owner.gameObject;
+                }
+                else
+                {
+                    _s.owner = SecNecessarySystem.Owner.gameObject;
+                }
                 AllTorpedose[i].SetActive(true);
                 AllTorpedose[i].transform.position = gameObject.transform.position;
-                AllTorpedose[i].transform.rotation = gameObject.transform.rotation;
-                Shell _s = AllTorpedose[i].GetComponent<Shell>();
+                if (!useParentForwardVector && !useParentBackVector)
+                {
+                    AllTorpedose[i].transform.rotation = gameObject.transform.rotation;
+                }
+                else if(useParentForwardVector)
+                {
+                    AllTorpedose[i].transform.rotation = gameObject.transform.root.rotation;
+                }
+                else if (useParentBackVector)
+                {
+                    AllTorpedose[i].transform.rotation = Quaternion.Inverse(gameObject.transform.root.rotation);
+                }
 
-                _s.attackType = AimingTarget;
-                _s.collisionDelay = collisionDelay;
-                _s.target = Target.transform;
-                _s.PlayFireSound();
+                if(impulseWeaponSound == null) _s.PlayFireSound();
                 break;
             }
         }
@@ -238,17 +323,43 @@ public class TorpedoLauncher : MonoBehaviour
             {
                 Attacking();
             }
-            if (!NecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
+            else
             {
-                NecessarySystem.Gunner.TargetsUnderAttack.Add(Target);
+                if(impulseWeaponSound != null && impulseWeaponSound.isPlaying)impulseWeaponSound.Stop();
+            }
+
+            if (ImpulsPhaser)
+            {
+                if (!PriNecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
+                {
+                    PriNecessarySystem.Gunner.TargetsUnderAttack.Add(Target);
+                }
+            }
+            else
+            {
+                if (!SecNecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
+                {
+                    SecNecessarySystem.Gunner.TargetsUnderAttack.Add(Target);
+                }   
             }
         }
         else
         {
-            if (NecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
+            if (ImpulsPhaser)
             {
-                NecessarySystem.Gunner.TargetsUnderAttack.Remove(Target);
+                if (PriNecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
+                {
+                    PriNecessarySystem.Gunner.TargetsUnderAttack.Remove(Target);
+                }  
             }
+            else
+            {
+                if (SecNecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
+                {
+                    SecNecessarySystem.Gunner.TargetsUnderAttack.Remove(Target);
+                }   
+            }
+            if(impulseWeaponSound != null && impulseWeaponSound.isPlaying)impulseWeaponSound.Stop();
         }
 
         if (Reloading)
@@ -265,6 +376,7 @@ public class TorpedoLauncher : MonoBehaviour
                     Reloading = false;
                 }
             }
+            if(impulseWeaponSound != null && impulseWeaponSound.isPlaying)impulseWeaponSound.Stop();
         }
     }
 }

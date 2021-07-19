@@ -6,7 +6,7 @@ using Controllers;
 
 public class SecondaryWeaponSS : SubSystem
 {
-    /// <summary> Торпедные и дисраптерные установки. </summary>
+    /// <summary> Торпедные установки. </summary>
     public List<TorpedoLauncher> Launchers;
     
     /// <summary> Канонир. </summary>
@@ -18,7 +18,10 @@ public class SecondaryWeaponSS : SubSystem
         
         foreach (TorpedoLauncher _l in Launchers)
         {
-            _l.NecessarySystem = this;
+            if (!_l.ImpulsPhaser)
+            {
+                _l.SecNecessarySystem = this;
+            }
         }
         
         if (!Owner.GetComponent<GunnerController>())
@@ -33,6 +36,7 @@ public class SecondaryWeaponSS : SubSystem
             Gunner = Owner.GetComponent<GunnerController>();
             Gunner.SecWea = this;
         }
+        Owner.effectManager.secondaryWeapon = this;
     }
 
     // Update is called once per frame
@@ -74,6 +78,7 @@ public class SecondaryWeaponSS : SubSystem
             _tl.Target = null;
         }
     }
+
     /// <summary> Удалить из листа атакуемых целей. </summary>
     public void DeleteFromTargetList(SelectableObject tar)
     {

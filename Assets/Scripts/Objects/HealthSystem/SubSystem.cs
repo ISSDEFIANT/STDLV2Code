@@ -18,6 +18,9 @@ public class SubSystem : MonoBehaviour
     public float SubSystemCurHealth;
     /// <summary> Эффективность подсистемы. </summary>
     public float efficiency = 1;
+    /// <summary> Структура эффектов и точек стрельбы. </summary>
+    public EffectManagerStructure effects;
+    
     // Start is called before the first frame update
     
     void Start()
@@ -45,6 +48,7 @@ public class SubSystem : MonoBehaviour
     /// <summary> Полевой ремонт подсистемы. </summary>
     private void RegenerateSystem()
     {
+        if(Owner._hs.MaxCrew > 0 && Owner._hs.curCrew <= 0) return;
         if (SubSystemCurHealth < SubSystemMaxHealth)
         {
             SubSystemCurHealth += Time.deltaTime;

@@ -4,49 +4,37 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Controllers;
+using UnityEngine.UI;
 
 public class SensorSS : SubSystem
 {
     /// <summary> Радиус. </summary>
     public float radius;
-    
-    /// <summary> Текущий радиус. </summary>
-    public float curRadius;
 
-    /// <summary> Все объекты в зоне видимости. </summary>
+    /// <summary> Все объекты в зоне видимости на текущей тревоге. </summary>
     public List<SelectableObject> ObjectsIsVisible = new List<SelectableObject>();
+    
+    /// <summary> Все объекты в максмальной зоне видимости. </summary>
+    public List<SelectableObject> ObjectsIsMaxVisible = new List<SelectableObject>();
 
     /// <summary> Менеджер. </summary>
     private GameManager manager;
     // Start is called before the first frame update
     void Start()
     {
-        manager = GameObject.FindObjectOfType<GameManager>();
-        curRadius = radius;
+        manager = GameManager.instance;
     }
 
     // Update is called once per frame
     public override void ChangeEfficiency()
     {
         base.ChangeEfficiency();
-        if (efficiency > 0.5f)
-        {
-            curRadius = radius;
-        }
-        else if (efficiency < 0.5f && efficiency > 0.2)
-        {
-            curRadius = radius/2;
-        }
-        else if (efficiency < 0.5f && efficiency > 0.2)
-        {
-            curRadius = 0;
-        }
     }
 
     public override void Update()
     {
         base.Update();
-        if (curRadius > 0)
+        if (radius > 0)
         {
             Scan();
         }
@@ -54,26 +42,63 @@ public class SensorSS : SubSystem
 
     void Scan()
     {
-        ObjectsIsVisible.Clear();
         foreach (SelectableObject obj in manager.SelectableObjects)
         {
-            if (Vector3.Distance(obj.transform.position, Owner.transform.position) > (curRadius+obj.ObjectRadius+Owner.ObjectRadius))
-            {
-                if (ObjectsIsVisible.Any(x => x == obj))
-                {
-                    ObjectsIsVisible.Remove(obj);
-                }
-            }
-            else
+            if (Vector3.Distance(obj.transform.position, Owner.transform.position) < (Owner.effectManager.SensorRange() +obj.ObjectRadius+Owner.ObjectRadius) && !obj.destroyed)
             {
                 if (!ObjectsIsVisible.Any(x => x == obj))
                 {
                     ObjectsIsVisible.Add(obj);
                 }
             }
+            else
+            {
+                if (ObjectsIsVisible.Any(x => x == obj))
+                {
+                    ObjectsIsVisible.Remove(obj);
+                }
+            }
+
+            if (Vector3.Distance(obj.transform.position, Owner.transform.position) < (Owner.SensorRange +obj.ObjectRadius+Owner.ObjectRadius) && !obj.destroyed)
+            {
+                if (!ObjectsIsMaxVisible.Any(x => x == obj))
+                {
+                    ObjectsIsMaxVisible.Add(obj);
+                    if (!Owner.destroyed)
+                    {
+                        obj.visibleFor.Add(this);
+                        obj.UpdateVisibility();
+                    }
+                    else
+                    {
+                        if (obj.visibleFor.Any(x => x == obj))
+                        {
+                            obj.visibleFor.Remove(this);
+                        }
+                        if (obj.visibleFor.Count == 0)
+                        {
+                            obj.isVisible = STMethods.Visibility.Invisible;
+                            obj.UpdateVisibility();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (ObjectsIsMaxVisible.Any(x => x == obj))
+                {
+                    obj.visibleFor.Remove(this);
+                    if (obj.visibleFor.Count == 0)
+                    {
+                        obj.isVisible = STMethods.Visibility.Invisible;
+                        obj.UpdateVisibility();
+                    }
+                    ObjectsIsMaxVisible.Remove(obj);
+                }
+            }
         }
     }
-    
+
     public List<SelectableObject> EnemysInSensorRange()
     {
         if (ObjectsIsVisible.Count == 0) return new List<SelectableObject>();
@@ -127,13 +152,14 @@ public class SensorSS : SubSystem
     
     public override void isCreated()
     {
+        radius = Owner.SensorRange;
+        
+        Owner.effectManager.sensor = this;
+        
         if (Owner.GetComponent<GunnerController>())
         {
             GunnerController Gunner = Owner.GetComponent<GunnerController>();
             Gunner.SenSS = this;
         }
-
-        radius = Owner.SensorRange;
     }
-
 }

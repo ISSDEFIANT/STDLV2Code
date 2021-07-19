@@ -1,56 +1,70 @@
-п»їusing System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class BeamWeapon : MonoBehaviour
 {
-    /// <summary> РџРѕРґСЃРёСЃС‚РµРјР°, РІР»РёСЏСЋС‰Р°СЏ РЅР° РѕСЂСѓРґРёРµ. </summary>
+    /// <summary> Подсистема, влияющая на орудие. </summary>
     public PrimaryWeaponSS NecessarySystem;
-    
-    /// <summary> РџСЂРёС†РµР»РёРІР°РЅРёРµ. </summary>
+
+    /// <summary> Прицеливание. </summary>
     public STMethods.AttackType AimingTarget;
 
-    /// <summary> РЇРІР»СЏРµС‚СЃСЏ Р»Рё РґСѓРіРѕР№. </summary>
+    /// <summary> Является ли дугой. </summary>
     public bool Arc;
-    /// <summary> РџСѓС‚СЊ РґСѓРіРё. </summary>
+
+    /// <summary> Путь дуги. </summary>
     public Rail ArcRail;
-    /// <summary> РљР°СЂСЂРµС‚РєР° 1. </summary>
+
+    /// <summary> Карретка 1. </summary>
     public Mover L1;
-    /// <summary> РљР°СЂСЂРµС‚РєР° 2. </summary>
+
+    /// <summary> Карретка 2. </summary>
     public Mover L2;
-    /// <summary> РЎРІРµС‡РµРЅРёРµ РІ РѕСЃРЅРѕРІРµРЅРёРё Р»СѓС‡Р°. </summary>
+
+    /// <summary> Свечение в основении луча. </summary>
     public GameObject BeamLight;
 
-    /// <summary> Р”СѓРіР° Р·Р°СЂСЏР¶Р°РµС‚СЃСЏ. </summary>
+    /// <summary> Дуга заряжается. </summary>
     public bool ChargeringArc;
 
-    /// <summary> Р’СЂРµРјСЏ РїРµСЂРµР·Р°СЂСЏРґРєРё. </summary>
+    /// <summary> Время перезарядки. </summary>
     public float ReloadTime;
-    /// <summary> РўРµРєСѓС‰РµРµ РІСЂРµРјСЏ РїРµСЂРµР·Р°СЂСЏРґРєРё. </summary>
+
+    /// <summary> Текущее время перезарядки. </summary>
     [HideInInspector] public float curReloadTime;
-    /// <summary> Р’СЂРµРјСЏ РѕРіРЅСЏ. </summary>
+
+    /// <summary> Время огня. </summary>
     public float FireTime;
-    /// <summary> РўРµРєСѓС‰РµРµ РІСЂРµРјСЏ РѕРіРЅСЏ. </summary>
+
+    /// <summary> Текущее время огня. </summary>
     [HideInInspector] public float curFireTime;
-    /// <summary> РЈСЂРѕРЅ. </summary>
+
+    /// <summary> Урон. </summary>
     public float Damage;
-    /// <summary> РўРµРєСѓС‰РёР№ СѓСЂРѕРЅ. </summary>
+
+    /// <summary> Текущий урон. </summary>
     [HideInInspector] public float curDamage;
 
-    /// <summary> Р‘Р»РѕРєРёСЂРѕРІРєР° РѕСЂСѓРґРёР№ РІ РіСЂР°РґСѓСЃРЅРѕР№ СЃРёСЃС‚РµРјРµ. </summary>
+    /// <summary> Блокировка орудий в градусной системе. </summary>
     public FireDegreesLockSystem DegreesLocking;
 
-    /// <summary> Р¦РµР»СЊ. </summary>
+    /// <summary> Цель. </summary>
     public SelectableObject Target;
 
-    /// <summary> РЎРёСЃС‚РµРјР° Р·Р°РїСѓСЃРєР° Р»СѓС‡Р°. </summary>
+    /// <summary> Система запуска луча. </summary>
     private ArcReactor_Launcher _arl;
 
-    /// <summary> Р”СЂСѓРіРёРµ РѕСЂСѓРґРёСЏ. </summary>
+    /// <summary> Другие орудия. </summary>
     public List<BeamWeapon> otherWeapon;
 
-    /// <summary> РќР°С…РѕР¶РґРµРЅРёРµ СЃРёСЃС‚РµРјС‹ Р·Р°РїСѓСЃРєР° Р»СѓС‡Р°. </summary>
+    /// <summary> Попадание фазера. </summary>
+    public RaycastHit phaserHit;
+
+    private Transform BeamEndTransform;
+
+    /// <summary> Нахождение системы запуска луча. </summary>
     void Start()
     {
         if (_arl == null)
@@ -81,6 +95,7 @@ public class BeamWeapon : MonoBehaviour
                         return;
                     }
                 }
+
                 Attacking();
             }
             else
@@ -99,6 +114,7 @@ public class BeamWeapon : MonoBehaviour
             {
                 DeactiveArcLights();
             }
+
             if (NecessarySystem.Gunner.TargetsUnderAttack.Any(x => x == Target))
             {
                 NecessarySystem.Gunner.TargetsUnderAttack.Remove(Target);
@@ -115,20 +131,94 @@ public class BeamWeapon : MonoBehaviour
         {
             if (Target != null)
             {
-                Vector3 LookVector = (Target.transform.position - this.transform.position);
-                    
-                Target._hs.ApplyDamage(curDamage, AimingTarget, LookVector);
+                int layerMask = 1 << 13 | 1 << 9;
+
+                SelectableObject DamageTarget;
+
+                if (phaserHit.point == Vector3.zero)
+                {
+                    if (Physics.Raycast(_arl.transform.position, _arl.transform.TransformDirection(Vector3.forward),
+                        out phaserHit, Mathf.Infinity, layerMask))
+                    {
+                        if (phaserHit.transform.root.GetComponent<SelectableObject>())
+                        {
+                            DamageTarget = phaserHit.transform.root.GetComponent<SelectableObject>();
+                        }
+                        else
+                        {
+                            DamageTarget = Target;
+                        }
+                    }
+                    else
+                    {
+                        DamageTarget = Target;
+                    }
+                }
+                else
+                {
+                    if (phaserHit.transform.root.GetComponent<SelectableObject>())
+                    {
+                        DamageTarget = phaserHit.transform.root.GetComponent<SelectableObject>();
+                    }
+                    else
+                    {
+                        DamageTarget = Target;
+                    }
+                }
+
+                if (DamageTarget._hs.Shilds != null && Target._hs.Shilds.Length > 0)
+                {
+                    if (DamageTarget._hs.Shilds[0].SubSystemCurHealth <= 0)
+                    {
+                        if(BeamEndTransform != null) DamageTarget._hs.ApplyDamage(curDamage / 2, AimingTarget, BeamEndTransform.position);
+                    }
+                    else
+                    {
+                        if(BeamEndTransform != null) DamageTarget._hs.ApplyDamage(curDamage, AimingTarget, BeamEndTransform.position);
+                    }
+                }
+                else
+                {
+                    if(BeamEndTransform != null) DamageTarget._hs.ApplyDamage(curDamage / 2, AimingTarget, BeamEndTransform.position);
+                }
+
+                if (DamageTarget.rigitBody.drag == 0)
+                {
+                    if (DamageTarget is ResourceSource)
+                    {
+                        ResourceSource res = DamageTarget as ResourceSource;
+                        if (res.spawner != null)
+                        {
+                            if(res.spawner.curAsteroids.Any(x => x == res)) res.spawner.curAsteroids.Remove(res);
+                        }
+                        DamageTarget.rigitBody.AddForceAtPosition((DamageTarget.transform.position - transform.position).normalized * curDamage * (DamageTarget.rigitBody.mass / 10), BeamEndTransform.position);
+                    }
+                    else
+                    {
+                        DamageTarget.rigitBody.AddForceAtPosition((DamageTarget.transform.position - transform.position).normalized * curDamage * (DamageTarget.rigitBody.mass / 1000), BeamEndTransform.position);
+                    }
+                }
+                
                 curFireTime -= Time.deltaTime;
                 BeamLight.SetActive(true);
             }
             else
             {
+                phaserHit.point = Vector3.zero;
                 curFireTime = 0;
-                BeamLight.SetActive(false);
+
+                if (BeamLight.activeSelf)
+                {
+                    BeamLight.SetActive(false);
+                    ChargeringArc = false;
+                    NecessarySystem.DeleteFromTargetList(Target);
+                    Target = null;
+                }
             }
         }
         else
         {
+            phaserHit.point = Vector3.zero;
             if (BeamLight.activeSelf)
             {
                 BeamLight.SetActive(false);
@@ -139,18 +229,18 @@ public class BeamWeapon : MonoBehaviour
         }
     }
 
-    /// <summary> РђРєС‚РёРІР°С†РёСЏ РѕСЂСѓРґРёСЏ. </summary>
+    /// <summary> Активация орудия. </summary>
     public void Active(SelectableObject target, STMethods.AttackType aiming)
     {
 
         if (target == null) return;
         AimingTarget = aiming;
-        
+
         if (NecessarySystem != null)
         {
-            curDamage = Damage * NecessarySystem.efficiency;
+            curDamage = NecessarySystem.Owner.effectManager.PrimaryWeaponDamage(Damage);
 
-            if (NecessarySystem.efficiency < 0.1f)
+            if (curDamage == 0)
             {
                 return;
             }
@@ -163,26 +253,26 @@ public class BeamWeapon : MonoBehaviour
         FireCheck(target);
     }
 
-    /// <summary> Р’С‹РєР»СЋС‡РµРЅРёРµ РєРѕСЂСЂРµС‚РѕРє Рё РёС… СЃРІРµС‚Р°. </summary>
+    /// <summary> Выключение корреток и их света. </summary>
     void DeactiveArcLights()
     {
         L1.gameObject.SetActive(false);
         L1.transform.position = ArcRail.nodes[0].position;
         L2.gameObject.SetActive(false);
-        L1.transform.position = ArcRail.nodes.Last().position;
+        L2.transform.position = ArcRail.nodes.Last().position;
 
         BeamLight.SetActive(false);
 
         SetLightsOnPosition = false;
     }
-    /// <summary> Р’С‹Р±РѕСЂ С†РµР»Рё. </summary>
-    /// <summary> РњРѕР¶РµС‚ Р»Рё СЃС‚СЂРµР»СЏС‚СЊ. </summary>
+
+    /// <summary> Выбор цели. </summary>
+    /// <summary> Может ли стрелять. </summary>
     void FireCheck(SelectableObject target)
     {
         if (SeeTarget(target.transform))
         {
             Target = target;
-            RotateBeamOnTarget(Target.transform);
         }
         else
         {
@@ -190,7 +280,8 @@ public class BeamWeapon : MonoBehaviour
             ChargeringArc = false;
         }
     }
-    /// <summary> Р Р°Р·РІРѕСЂРѕС‚ РѕСЂСѓРґРёСЏ РЅР° С†РµР»СЊ. </summary>
+
+    /// <summary> Разворот орудия на цель. </summary>
     void RotateBeamOnTarget(Transform target)
     {
         if (target != null)
@@ -198,45 +289,98 @@ public class BeamWeapon : MonoBehaviour
             if (!Arc)
             {
                 Vector3 LookVector = (target.transform.position - this.transform.position);
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(LookVector), 360);
+                this.transform.rotation =
+                    Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(LookVector), 360);
             }
             else
             {
-                Vector3 LookVector = (target.transform.position - STMethods.NearestTransform(ArcRail.nodes, target.transform).transform.position);
-                _arl.transform.rotation = Quaternion.Slerp(STMethods.NearestTransform(ArcRail.nodes, target.transform).transform.rotation, Quaternion.LookRotation(LookVector), 360);
+                Vector3 LookVector = (target.transform.position -
+                                      STMethods.NearestTransform(ArcRail.nodes, target.transform).transform.position);
+                _arl.transform.rotation =
+                    Quaternion.Slerp(STMethods.NearestTransform(ArcRail.nodes, target.transform).transform.rotation,
+                        Quaternion.LookRotation(LookVector), 360);
             }
         }
     }
-    /// <summary> Р’РµРґРµРЅРёРµ РѕРіРЅСЏ. </summary>
+
+    /// <summary> Ведение огня. </summary>
     void Attacking()
     {
         if (curReloadTime <= 0)
         {
+            int layerMask = 1 << 9;
+
+            SelectableObject DamageTarget = Target;
+
+            RaycastHit seeHit;
+
+            if (Physics.Raycast(_arl.transform.position, _arl.transform.TransformDirection(Vector3.forward),
+                out seeHit, Mathf.Infinity, layerMask))
+            {
+                DamageTarget = seeHit.transform.root.GetComponent<SelectableObject>();
+            }
+
             if (!Arc)
             {
-                Fire();
-                curReloadTime = ReloadTime;
+                if (DamageTarget != Target)
+                {
+                    if (GameManager.instance.Players[NecessarySystem.Owner.PlayerNum].TeamNum !=
+                        GameManager.instance.Players[DamageTarget.PlayerNum].TeamNum)
+                    {
+                        Fire(DamageTarget);
+                    }
+                }
+                else
+                {
+                    Fire(Target);
+                }
+
+                curReloadTime = NecessarySystem.Owner.effectManager.PrimaryWeaponFireReload(ReloadTime);
             }
             else
             {
-                ArcAttackSequence(STMethods.NearestTransformInt(ArcRail.nodes, Target.transform));
+                if (DamageTarget != Target)
+                {
+                    if (GameManager.instance.Players[NecessarySystem.Owner.PlayerNum].TeamNum !=
+                        GameManager.instance.Players[DamageTarget.PlayerNum].TeamNum)
+                    {
+                        ArcAttackSequence(STMethods.NearestTransformInt(ArcRail.nodes, Target.transform), DamageTarget);
+                    }
+                }
+                else
+                {
+                    ArcAttackSequence(STMethods.NearestTransformInt(ArcRail.nodes, Target.transform), Target);
+                }
             }
         }
     }
-    /// <summary> РЎРѕР·РґР°РЅРёРµ Р»СѓС‡Р° Рё РЅР°С‡Р°Р»Рѕ РЅР°РЅРµСЃРµРЅРёСЏ СѓСЂРѕРЅР°. </summary>
-    void Fire()
+
+    /// <summary> Создание луча и начало нанесения урона. </summary>
+    void Fire(SelectableObject target)
     {
         if (!Arc)
         {
             curFireTime = FireTime;
-            _arl.PhaserFire(Target.transform);
+            if (NecessarySystem.Owner.isVisible == STMethods.Visibility.Visible)
+            {
+                if (target._hs.ShieldsEnable())
+                {
+                    BeamEndTransform = _arl.LaunchRayAndGetTransform();
+                }
+                else
+                {
+                    BeamEndTransform = target._hs.getRandomFirePoint(AimingTarget, transform);
+                    _arl.PhaserFire(BeamEndTransform);
+                }
+            }
         }
     }
-    /// <summary> Р•СЃР»Рё С†РµР»СЊ РІРёРґРЅР°. </summary>
+
+    /// <summary> Если цель видна. </summary>
     bool SeeTarget(Transform target)
-    {        
+    {
         RotateBeamOnTarget(target);
-        
+
         Vector3 _lv;
         if (!Arc)
         {
@@ -244,7 +388,7 @@ public class BeamWeapon : MonoBehaviour
         }
         else
         {
-           _lv = _arl.transform.localRotation.eulerAngles;
+            _lv = _arl.transform.localRotation.eulerAngles;
         }
 
         if (DegreesLocking.InvertX && !DegreesLocking.InvertY)
@@ -293,44 +437,77 @@ public class BeamWeapon : MonoBehaviour
 
         return false;
     }
-    /// <summary> РџСЂРѕРёР·РІРѕРґРёС‚СЃСЏ Р»Рё СѓСЃС‚Р°РЅРѕРІРєР° РєРѕСЂСЂРµС‚РѕРє РЅР° РїРѕР·РёС†РёРё. </summary>
+
+    /// <summary> Производится ли установка корреток на позиции. </summary>
     private bool SetLightsOnPosition;
-    /// <summary> РџРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ Р°С‚Р°РєРё РґСѓРіРѕРІРѕРіРѕ РѕСЂСѓРґРёСЏ. </summary>
-    private void ArcAttackSequence(int node)
+
+    /// <summary> Последовательность атаки дугового орудия. </summary>
+    private void ArcAttackSequence(int node, SelectableObject target)
     {
-
-        if (!SetLightsOnPosition)
+        if (SeeTarget(target.transform))
         {
-            ChargeringArc = true;
-            
-            LControllVoid(L2, node, true);
-            LControllVoid(L1, node, false);
+            if (!SetLightsOnPosition)
+            {
+                ChargeringArc = true;
 
+                LControllVoid(L2, node, true);
+                LControllVoid(L1, node, false);
 
-            L1.gameObject.SetActive(true);
-            L2.gameObject.SetActive(true);
+                if (NecessarySystem.Owner.isVisible == STMethods.Visibility.Visible)
+                {
+                    L1.gameObject.SetActive(true);
+                    L2.gameObject.SetActive(true);
+                }
 
-            SetLightsOnPosition = true;
+                SetLightsOnPosition = true;
+            }
+
+            if (L1.gameObject.activeSelf && L2.gameObject.activeSelf &&
+                Vector3.Distance(L1.transform.position, L2.transform.position) < 0.2f)
+            {
+                if (NecessarySystem.Owner.isVisible == STMethods.Visibility.Visible)
+                {
+                    _arl.gameObject.transform.position = L1.transform.position;
+                    if (target._hs.ShieldsEnable())
+                    {
+                        BeamEndTransform = _arl.LaunchRayAndGetTransform();
+                    }
+                    else
+                    {
+                        BeamEndTransform = target._hs.getRandomFirePoint(AimingTarget, transform);
+                        _arl.PhaserFire(BeamEndTransform);
+                    }
+                }
+
+                L1.gameObject.SetActive(false);
+                L1.transform.position = ArcRail.nodes[0].position;
+                L2.gameObject.SetActive(false);
+                L2.transform.position = ArcRail.nodes.Last().position;
+
+                SetLightsOnPosition = false;
+
+                curFireTime = FireTime;
+                curReloadTime = NecessarySystem.Owner.effectManager.PrimaryWeaponFireReload(ReloadTime);
+            }
         }
-
-        if (L1.gameObject.activeSelf && L2.gameObject.activeSelf &&
-            Vector3.Distance(L1.transform.position, L2.transform.position) < 0.1f)
+        else
         {
-            _arl.gameObject.transform.position = L1.transform.position;
-            _arl.PhaserFire(Target.transform);
+            ChargeringArc = false;
+            BeamLight.SetActive(false);
 
             L1.gameObject.SetActive(false);
             L1.transform.position = ArcRail.nodes[0].position;
             L2.gameObject.SetActive(false);
-            L1.transform.position = ArcRail.nodes.Last().position;
+            L2.transform.position = ArcRail.nodes.Last().position;
 
             SetLightsOnPosition = false;
 
-            curFireTime = FireTime;
-            curReloadTime = ReloadTime;
+            curReloadTime = NecessarySystem.Owner.effectManager.PrimaryWeaponFireReload(ReloadTime);
+            DeactiveArcLights();
         }
     }
-    /// <summary> Р Р°Р±РѕС‚Р° РєРѕСЂСЂРµС‚РєРё. </summary>
+
+    /// <summary> Работа корретки. </summary>
     void LControllVoid(Mover light, int node, bool Revert)
     {
         float LSpeed = light.speed;

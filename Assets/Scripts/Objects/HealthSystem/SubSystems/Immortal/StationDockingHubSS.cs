@@ -11,8 +11,24 @@ public class StationDockingHubSS : SubSystem
     public ResourceUnloadingController _ruc;
     public FixingPointController _fpc;
     public DockingConstructionTypeController _dcc;
-    public Vector3 AwayPoint;
+    public DeassemblingPointController _dpc;
+    public AwaitingPointController _apc;
+    public Vector3 AwayPoint, AwayPointRotation;
     // Start is called before the first frame update
+
+    void Start()
+    {
+        foreach (DockingHub _dh in Hubs)
+        {
+            if (_dh.AbleToConstruct != null && _dh.AbleToConstruct.Count > 0)
+            {
+                foreach (ConstructionContract _c in _dh.AbleToConstruct)
+                {
+                    setIndexList(_c);
+                }
+            }
+        }
+    }
     void Awake()
     {
         Immortal = true;
@@ -22,6 +38,12 @@ public class StationDockingHubSS : SubSystem
 
     public override void isCreated()
     {
+        if (!Owner.GetComponent<AwaitingPointController>())
+        {
+            _apc = Owner.gameObject.AddComponent<AwaitingPointController>();
+            _apc.AwaitingPoint = AwayPoint;
+            _apc.AwaitingPointRotation = AwayPointRotation;
+        } 
         foreach (DockingHub _dh in Hubs)
         {
             if (_dh.ResourceUnloading)
@@ -30,7 +52,7 @@ public class StationDockingHubSS : SubSystem
                 {
                     _ruc = Owner.gameObject.AddComponent<ResourceUnloadingController>();
                     _ruc.HubSS = this;
-                    _ruc.AwaitingPoint = AwayPoint;
+                    _ruc.awaitingPoint = _apc;
                 }        
             }
 
@@ -40,7 +62,7 @@ public class StationDockingHubSS : SubSystem
                 {
                     _fpc = Owner.gameObject.AddComponent<FixingPointController>();
                     _fpc.HubSS = this;
-                    _fpc.AwaitingPoint = AwayPoint;
+                    _fpc.awaitingPoint = _apc;
                 }    
             }
             
@@ -52,23 +74,48 @@ public class StationDockingHubSS : SubSystem
                     _dcc.HubSS = this;
                     if (_dh.AbleToConstruct.Count > 0)
                     {
-                        foreach (ConstructionContract cc in _dh.AbleToConstruct)
-                        {
-                            _dcc.AbleToConstruct.Add(cc);   
-                        }
+                        _dcc.AbleToConstruct.AddRange(_dh.AbleToConstruct);
                     }
+                }    
+            }
+            
+            if (_dh.ShipDeassembling)
+            {
+                if (!Owner.GetComponent<DeassemblingPointController>())
+                {
+                    _dpc = Owner.gameObject.AddComponent<DeassemblingPointController>();
+                    _dpc.HubSS = this;
+                    _dpc.awaitingPoint = _apc;
                 }    
             }
         }
     }
     
-    public SubSystem SetHubPurpose(DockingHub[] NewHubs, Vector3 AwaitingPoint, SelectableObject ow)
+    public SubSystem SetHubPurpose(DockingHub[] NewHubs, Vector3 AwaitingPoint, Vector3 AwaitingPointRotation, SelectableObject ow)
     {
         Hubs = NewHubs.ToArray();
         Owner = ow;
         AwayPoint = AwaitingPoint;
+        AwayPointRotation = AwaitingPointRotation;
         isCreated();
         return this;
+    }
+
+    public void setIndexList(ConstructionContract vessel)
+    {
+        switch (vessel.Object)
+        {
+            case "AtlantiaClass":
+                vessel.IndexList = GameManager.instance.NamesIndexes.AtlantiaIndexes;
+                break;
+            
+            case "DefiantClass":
+                vessel.IndexList = GameManager.instance.NamesIndexes.DefianIndexes;
+                break;
+            case "NovaClass":
+                vessel.IndexList = GameManager.instance.NamesIndexes.NovaIndexes;
+                break;
+        }
     }
 }
 [System.Serializable]
@@ -83,6 +130,7 @@ public class DockingHub
     public bool ResourceUnloading;
     public bool ShipFixing;
     public bool ShipBuilding;
+    public bool ShipDeassembling;
 
     public List<ConstructionContract> AbleToConstruct;
 

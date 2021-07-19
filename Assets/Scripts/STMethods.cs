@@ -8,14 +8,24 @@ using Debug = UnityEngine.Debug;
 
 public static class STMethods
 {
+    static public T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+    {
+        return gameObject.GetComponent<T>() ?? gameObject.AddComponent<T>();
+    }
+    
+    /// <summary> Оси. </summary>
+    public enum Axis
+    {
+        XAxis,
+        YAxis,
+        ZAxis
+    }
     /// <summary> Тревоги. </summary>
-
     public enum Alerts
     {
         RedAlert,
         YellowAlert,
         GreenAlert
-        
     }
     
     /// <summary> Наведение на определённые системы. </summary>
@@ -49,6 +59,7 @@ public static class STMethods
         Cardassian,
         S8472,
         Borg,
+        None
     }
 
     /// <summary> Тип проигрывания движения по рельсе. </summary>
@@ -57,6 +68,26 @@ public static class STMethods
     {
         Linear,
         Catmull
+    }
+    
+    /// <summary> Тревоги. </summary>
+    public enum PlayerCameraState
+    {
+        Normal,
+        OrderSetting,
+        PatrolSetting,
+        BuildingPlacement,
+        FlagPlacing,
+        Lock
+    }
+    
+    /// <summary> Вид объекта. </summary>
+    public enum Visibility
+    {
+        Invisible,
+        FarNoise,
+        NearNoise,
+        Visible
     }
 
     /// <summary> Обнаружение ближайшего из списка. </summary>
@@ -96,8 +127,13 @@ public static class STMethods
                 closest = all;
             }
         }
-
         return closest;
+    }
+    
+    public static Transform[] NearestTransformSortList(Transform[] transformList, Transform target)
+    {
+        Transform[] output = transformList.OrderBy((d) => (d.position - target.position).sqrMagnitude).ToArray();
+        return output;
     }
     
     /// <summary> Обнаружение номера ближайшего объекта из списка. </summary>
@@ -122,9 +158,10 @@ public static class STMethods
     public static void RemoveAllNullsFromList<T>(List<T> list)
     {
         List<int> nulls = new List<int>();
-        for (int i = 0; i < list.Count; i++)
+        for (int i = list.Count-1; i >= 0; i--)
         {
-            if (list[i] == null) nulls.Add(i);
+            //if (list[i] != null) {}else{nulls.Add(i);}
+            if (list[i].IsDestroyed()) {nulls.Add(i);}
         }
 
         foreach (int tar in nulls)
@@ -194,7 +231,7 @@ public static class STMethods
     public static float MaxRadiusInFleet(List<Mobile> list)
     {
         float max = 0;
-        for (int i = 0; i < list.Count-1; i++)
+        for (int i = 0; i < list.Count; i++)
         {
             if (max < list[i].ObjectRadius)
             {
@@ -210,24 +247,119 @@ public static class STMethods
         SelectableObject newComponent = null;
         switch (className)
         {
+            case "AtlantiaClass":
+                newComponent = obj.AddComponent<Atlantia>();
+                break;
+            case "AtlantiaClassCargo":
+                //newComponent = obj.AddComponent<Atlantia>();
+                break;
+            
+            case "DefiantClass":
+                newComponent = obj.AddComponent<Defiant>();
+                break;
+            case "NovaClass":
+                newComponent = obj.AddComponent<Nova>();
+                break;
+            case "SaberClass":
+                newComponent = obj.AddComponent<Saber>();
+                break;
+            
+            case "IntrepidClass":
+                //newComponent = obj.AddComponent<Intrepid>();
+                break;
+            case "LunaClass":
+                newComponent = obj.AddComponent<Luna>();
+                break;
+            case "SteamrunnerClass":
+                newComponent = obj.AddComponent<Steamrunner>();
+                break;
+
+            case "AkiraClass":
+                newComponent = obj.AddComponent<Akira>();
+                break;
+            case "PrometheusClass":
+                newComponent = obj.AddComponent<Prometheus>();
+                break;
+            case "NebulaClass":
+                newComponent = obj.AddComponent<Nebula>();
+                break;
+            case "GalaxyClass":
+                newComponent = obj.AddComponent<Galaxy>();
+                break;
             case "SovereignClass":
                 newComponent = obj.AddComponent<Sovereign>();
                 break;
+            case "ExcaliburClass":
+                newComponent = obj.AddComponent<Excalibur>();
+                break;
+            
+            case "FedStarBase":
+                newComponent = obj.AddComponent<FedStarBase>();
+                break;
+            case "FedStarBaseInProgress":
+                newComponent = obj.AddComponent<FedStarBaseInProgress>();
+                break;
+            
+            case "FedDrydock":
+                newComponent = obj.AddComponent<FedDrydock>();
+                break;
+            case "FedDrydockInProgress":
+                newComponent = obj.AddComponent<FedDrydockInProgress>();
+                break;
+            
+            case "FedShipyard":
+                newComponent = obj.AddComponent<FedAdvancedDrydock>();
+                break;
+            case "FedShipyardInProgress":
+                newComponent = obj.AddComponent<FedShipyardInProgress>();
+                break;
+            
+            case "FedSciStation":
+                newComponent = obj.AddComponent<FedSciStation>();
+                break;
+            case "FedSciStationInProgress":
+                newComponent = obj.AddComponent<FedSciStationInProgress>();
+                break;
+            
+            case "FedMiningStation":
+                newComponent = obj.AddComponent<FedMiningStation>();
+                break;
+            case "FedMiningStationInProgress":
+                newComponent = obj.AddComponent<FedMiningStationInProgress>();
+                break;
+            
+            case "FedOutpost":
+                newComponent = obj.AddComponent<FedOutpost>();
+                break;
+            case "FedOutpostInProgress":
+                newComponent = obj.AddComponent<FedOutpostInProgress>();
+                break;
         }
-
+        GameManager.instance.UpdateList();
         return newComponent;
     }
 
     public static ConstructionContract CreateCopy(ConstructionContract obj)
     {
         ConstructionContract _cc = new ConstructionContract();
+        _cc.Icon = obj.Icon;
+        _cc.ObjectName = obj.ObjectName;
         _cc.Object = obj.Object;
+        _cc.ObjectUnderConstruction = obj.ObjectUnderConstruction;
         _cc.Animation = obj.Animation;
+        _cc.Ghost = obj.Ghost;
         _cc.TitaniumCost = obj.TitaniumCost;
         _cc.DilithiumCost = obj.DilithiumCost;
         _cc.BiomatterCost = obj.BiomatterCost;
         _cc.CrewCost = obj.CrewCost;
         _cc.ConstructionTime = obj.ConstructionTime;
+        _cc.MaxConstructionTime = obj.MaxConstructionTime;
+        _cc.ObjectRadius = obj.ObjectRadius;
+        _cc.ObjectCategory = obj.ObjectCategory;
+        _cc.BuilderEfficiency = obj.BuilderEfficiency;
+        _cc.NameIndex = obj.NameIndex;
+        _cc.IndexList = obj.IndexList;
+        _cc.MaxIndexCount = obj.MaxIndexCount;
 
         return _cc;
     }
@@ -368,12 +500,112 @@ public class FixingCommand : PlayerCommands
 public class UndockingCommand : PlayerCommands
 {
     public PlayerCommands commandAfterUndocking;
+    public Vector3 AwaitingPoint;
     public SelectableObject DocingStation;
     public DockingHub Hub;
+}
+
+public class BuildingCommand : PlayerCommands
+{
+    public GameObject proTarget = null;
+    public ConstructionContract target;
+    public Vector3 posVec;
+    public Vector3 rotVec;
+
+    public GameObject ghost;
+}
+
+public class SettingAbilityTargetCommand : PlayerCommands
+{
+    public SelectableObject target;
+    public Skill ability;
 }
 
 [System.Serializable]
 public class FleetControllingFields
 {
     public List<SelectableObject>[] fleets = new List<SelectableObject>[10];
+}
+
+[System.Serializable]
+public class ConstructionContract
+{
+    /// <summary> Иконка того, что строим. </summary>
+    public Sprite Icon;
+    
+    /// <summary> Как называется. </summary>
+    public string ObjectName;
+    
+    /// <summary> Что строим. </summary>
+    public string Object;
+    
+    /// <summary> В процессе. </summary>
+    public string ObjectUnderConstruction;
+
+    /// <summary> Анимация того, что строим. </summary>
+    public GameObject Animation;
+    
+    /// <summary> Призрак того что строим. </summary>
+    public GameObject Ghost;
+
+    /// <summary> Сколько титана. </summary>
+    public float TitaniumCost = 0;
+
+    /// <summary> Сколько дилития. </summary>
+    public float DilithiumCost = 0;
+
+    /// <summary> Сколько биоматериала. </summary>
+    public float BiomatterCost = 0;
+
+    /// <summary> Сколько людей. </summary>
+    public float CrewCost = 0;
+
+    /// <summary> Сколько времени. </summary>
+    public float ConstructionTime = 0;
+    
+    /// <summary> Сколько масксимально времени. </summary>
+    public float MaxConstructionTime = 0;
+    
+    /// <summary> Радиус объекта. </summary>
+    public float ObjectRadius = 0;
+    
+    /// <summary> Категория объекта. </summary>
+    public int ObjectCategory = 0;
+    
+    /// <summary> Эффективность строителя. </summary>
+    public float BuilderEfficiency = 25;
+    
+    /// <summary> Индекс имени. </summary>
+    public int NameIndex = -1;
+    
+    /// <summary> Лист индексов. </summary>
+    public List<int> IndexList;
+    
+    /// <summary> Максимальное количество имён. </summary>
+    public int MaxIndexCount;
+
+    public bool CanBeBuild(int playerNum)
+    {
+        if (GameManager.instance.Players[playerNum - 1].Titanium >= TitaniumCost &&
+            GameManager.instance.Players[playerNum - 1].Dilithium >= DilithiumCost &&
+            GameManager.instance.Players[playerNum - 1].Biomatter >= BiomatterCost && GameManager.instance.Players[playerNum - 1].Crew >= CrewCost)
+        {
+            return true;
+        }
+        return false;
+    }
+    public void RemoveRes(int playerNum)
+    {
+        GameManager.instance.Players[playerNum - 1].Titanium -= TitaniumCost;
+        GameManager.instance.Players[playerNum - 1].Dilithium -= DilithiumCost;
+        GameManager.instance.Players[playerNum - 1].Biomatter -= BiomatterCost;
+        GameManager.instance.Players[playerNum - 1].Crew -= CrewCost;
+    }
+    public void ReturnRes(int playerNum)
+    {
+        GameManager.instance.Players[playerNum - 1].Titanium += TitaniumCost;
+        GameManager.instance.Players[playerNum - 1].Dilithium += DilithiumCost;
+        GameManager.instance.Players[playerNum - 1].Biomatter += BiomatterCost;
+        GameManager.instance.Players[playerNum - 1].Crew += CrewCost;
+    }
 }

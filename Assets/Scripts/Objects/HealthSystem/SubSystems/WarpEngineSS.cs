@@ -5,9 +5,9 @@ using UnityEngine;
 public class WarpEngineSS : SubSystem
 {
     // Start is called before the first frame update
-    void Start()
+    public override void isCreated()
     {
-        
+        Owner.effectManager.warpEngine = this;
     }
 
     // Update is called once per frame

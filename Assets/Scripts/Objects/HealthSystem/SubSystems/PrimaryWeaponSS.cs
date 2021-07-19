@@ -8,6 +8,9 @@ public class PrimaryWeaponSS : SubSystem
 {
     /// <summary> Лучевые орудия. </summary>
     public List<BeamWeapon> BeamWeapons;
+    
+    /// <summary> Импульсные установки. </summary>
+    public List<TorpedoLauncher> Launchers;
 
     /// <summary> Канонир. </summary>
     public GunnerController Gunner;
@@ -25,6 +28,16 @@ public class PrimaryWeaponSS : SubSystem
 
             _bw.otherWeapon = test;
         }
+        
+        Launchers = Owner.GetComponentsInChildren<TorpedoLauncher>().ToList();
+        
+        foreach (TorpedoLauncher _l in Launchers)
+        {
+            if (_l.ImpulsPhaser)
+            {
+                _l.PriNecessarySystem = this;
+            }
+        }
 
         if (!Owner.GetComponent<GunnerController>())
         {
@@ -38,6 +51,7 @@ public class PrimaryWeaponSS : SubSystem
             Gunner = Owner.GetComponent<GunnerController>();
             Gunner.PriWea = this;
         }
+        Owner.effectManager.primaryWeapon = this;
     }
 
     // Update is called once per frame
@@ -57,10 +71,18 @@ public class PrimaryWeaponSS : SubSystem
                 _pw.Active(target, Aiming);
             }
         }
+        if (Launchers.Count > 0)
+        {
+            foreach (TorpedoLauncher _l in Launchers)
+            {
+                _l.Active(target, Aiming);
+            }
+        }
     }
     /// <summary> Атаковать не основную цель. </summary>
     public void AttackNotMainTarget(SelectableObject target, STMethods.AttackType Aiming)
     {
+        if (target == null) return; 
         if (BeamWeapons.Count > 0)
         {
             foreach (BeamWeapon _pw in BeamWeapons)
@@ -74,6 +96,16 @@ public class PrimaryWeaponSS : SubSystem
                 }
             }
         }
+        if (Launchers.Count > 0)
+        {
+            foreach (TorpedoLauncher _l in Launchers)
+            {
+                if (_l.Target == null)
+                {
+                    _l.Active(target, Aiming);
+                }
+            }
+        }
     }
     /// <summary> Прекратить атаку. </summary>
     public void StopFiring()
@@ -81,6 +113,10 @@ public class PrimaryWeaponSS : SubSystem
         foreach (BeamWeapon _pw in BeamWeapons)
         {
             _pw.Target = null;
+        }
+        foreach (TorpedoLauncher _tl in Launchers)
+        {
+            _tl.Target = null;
         }
     }
 

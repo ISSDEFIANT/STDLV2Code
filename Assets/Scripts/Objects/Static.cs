@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Static : SelectableObject
 {
+    /// <summary> Построен. </summary>
+    public bool Constructed;
     // Start is called before the first frame update
     public override void Awake()
     {

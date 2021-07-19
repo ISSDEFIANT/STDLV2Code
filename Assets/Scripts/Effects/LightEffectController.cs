@@ -17,7 +17,7 @@ public class LightEffectController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _so = GetComponentInParent<SelectableObject>();
+        _so = gameObject.transform.root.GetComponent<SelectableObject>();
 
         if (_so.healthSystem)
         {
@@ -56,7 +56,7 @@ public class LightEffectController : MonoBehaviour
             Blinking(warpEngineCE, warpEngineCE.Colors);
             Blinking(warpCoreCE, warpCoreCE.Colors);
         }
-        if(_so.destroyed)DestroyedExplosions.SetActive(true);
+        if(_so.destroyed && _so.isVisible == STMethods.Visibility.Visible)DestroyedExplosions.SetActive(true);
     }
 
     private void LateUpdate()
@@ -124,7 +124,12 @@ public class LightEffectController : MonoBehaviour
 
     void FixColors(LightControlElement target, LightBlinkColors colors)
     {
-        if(target.timer > target.curMaxtimer-0.05f)return;
+        if(target.hasSystem && target.SubSystem.SubSystemCurHealth < target.SubSystem.SubSystemMaxHealth * 0.125f) return;
+        if (target.hasSystem && target.SubSystem.SubSystemCurHealth <= target.SubSystem.SubSystemMaxHealth / 2)
+        {
+            if (target.timer > target.curMaxtimer - 0.05f) return;
+        }
+
         if (target.Parts.Count > 0)
         {
             foreach (Renderer p in target.Parts)

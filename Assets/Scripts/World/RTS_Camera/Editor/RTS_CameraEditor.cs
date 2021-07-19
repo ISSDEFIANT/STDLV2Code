@@ -56,6 +56,14 @@ namespace RTS_Cam
             {
                 EditorGUILayout.FloatField("Screen edge border size: ", camera.screenEdgeBorder);
                 camera.screenEdgeMovementSpeed = EditorGUILayout.FloatField("Screen edge movement speed: ", camera.screenEdgeMovementSpeed);
+                camera.zoomScript = EditorGUILayout.ObjectField("Zoom script: ", camera.zoomScript, typeof(CameraZoom)) as CameraZoom;
+                if (camera.zoomScript != null)
+                {
+                    camera.screenEdgeMovementSpeedMin = EditorGUILayout.FloatField("Screen edge movement min speed: ",
+                        camera.screenEdgeMovementSpeedMin);
+                    camera.screenEdgeMovementSpeedMax = EditorGUILayout.FloatField("Screen edge movement max speed: ",
+                        camera.screenEdgeMovementSpeedMax);
+                }
             }
 
             using (new HorizontalBlock())
@@ -88,27 +96,63 @@ namespace RTS_Cam
 
         private void RotationTab()
         {
-            using (new HorizontalBlock())
+            camera.alternativeRotationScript = EditorGUILayout.ObjectField("Alternative rotation script: ", camera.alternativeRotationScript, typeof(SgtMouseLook)) as SgtMouseLook;
+            if (camera.alternativeRotationScript == null)
             {
-                GUILayout.Label("Keyboard input: ", EditorStyles.boldLabel, GUILayout.Width(170f));
-                camera.useKeyboardRotation = EditorGUILayout.Toggle(camera.useKeyboardRotation);
-            }
-            if(camera.useKeyboardRotation)
-            {
-                camera.rotateLeftKey = (KeyCode)EditorGUILayout.EnumPopup("Rotate left: ", camera.rotateLeftKey);
-                camera.rotateRightKey = (KeyCode)EditorGUILayout.EnumPopup("Rotate right: ", camera.rotateRightKey);
-                camera.rotationSped = EditorGUILayout.FloatField("Keyboard rotation speed", camera.rotationSped);
-            }
+                using (new HorizontalBlock())
+                {
+                    GUILayout.Label("Keyboard input: ", EditorStyles.boldLabel, GUILayout.Width(170f));
+                    camera.useKeyboardRotation = EditorGUILayout.Toggle(camera.useKeyboardRotation);
+                }
 
-            using (new HorizontalBlock())
-            {
-                GUILayout.Label("Mouse input: ", EditorStyles.boldLabel, GUILayout.Width(170f));
-                camera.useMouseRotation = EditorGUILayout.Toggle(camera.useMouseRotation);
-            }
-            if(camera.useMouseRotation)
-            {
-                camera.mouseRotationKey = (KeyCode)EditorGUILayout.EnumPopup("Mouse rotation key: ", camera.mouseRotationKey);
-                camera.mouseRotationSpeed = EditorGUILayout.FloatField("Mouse rotation speed: ", camera.mouseRotationSpeed);
+                if (camera.useKeyboardRotation)
+                {
+                    camera.rotateLeftKey = (KeyCode) EditorGUILayout.EnumPopup("Rotate left: ", camera.rotateLeftKey);
+                    camera.rotateRightKey =
+                        (KeyCode) EditorGUILayout.EnumPopup("Rotate right: ", camera.rotateRightKey);
+                    camera.rotationSped = EditorGUILayout.FloatField("Keyboard rotation speed", camera.rotationSped);
+                }
+
+                using (new HorizontalBlock())
+                {
+                    GUILayout.Label("Mouse input: ", EditorStyles.boldLabel, GUILayout.Width(170f));
+                    camera.useMouseRotation = EditorGUILayout.Toggle(camera.useMouseRotation);
+                }
+
+                if (camera.useMouseRotation)
+                {
+                    camera.mouseRotationKey =
+                        (KeyCode) EditorGUILayout.EnumPopup("Mouse rotation key: ", camera.mouseRotationKey);
+                    camera.mouseRotationSpeed =
+                        EditorGUILayout.FloatField("Mouse rotation speed: ", camera.mouseRotationSpeed);
+                }
+
+                if (camera.targetFollow != null)
+                {
+                    using (new HorizontalBlock())
+                    {
+                        GUILayout.Label("Follow target rotation: ", EditorStyles.boldLabel, GUILayout.Width(170f));
+                        camera.followRotation = EditorGUILayout.Toggle(camera.followRotation);
+                    }
+                    if (camera.followRotation)
+                    {
+                        using (new HorizontalBlock())
+                        {
+                            GUILayout.Label("Enable X axis: ", EditorStyles.boldLabel, GUILayout.Width(170f));
+                            camera.followRotationX = EditorGUILayout.Toggle(camera.followRotationX);
+                        }
+                        using (new HorizontalBlock())
+                        {
+                            GUILayout.Label("Enable Y axis: ", EditorStyles.boldLabel, GUILayout.Width(170f));
+                            camera.followRotationY = EditorGUILayout.Toggle(camera.followRotationY);
+                        }
+                        using (new HorizontalBlock())
+                        {
+                            GUILayout.Label("Enable Z axis: ", EditorStyles.boldLabel, GUILayout.Width(170f));
+                            camera.followRotationZ = EditorGUILayout.Toggle(camera.followRotationZ);
+                        }
+                    }
+                }
             }
         }
 

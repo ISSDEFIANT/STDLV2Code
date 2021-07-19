@@ -45,6 +45,18 @@ namespace Controllers
         public WaypointCircuit PatternGamma;
 
         private WaypointProgressTracker _pt;
+        public NavigationComponent _navigation;
+
+        
+        public float minFleetImpulseSpeed(List<Mobile> fleet)
+        {
+            return fleet.Select(shipGO => shipGO.GetComponent<Engines>()).Min(moveComp => moveComp.maxAvailableSpeed());
+        }
+        
+        public float minFleetWarpSpeed(List<Mobile> fleet)
+        {
+            return fleet.Select(shipGO => shipGO.GetComponent<Engines>()).Min(moveComp => moveComp.maxAvailableWarpSpeed());
+        }
 
         void Awake()
         {
@@ -61,6 +73,8 @@ namespace Controllers
             tracker.name = "WayTracker";
             tracker.transform.parent = transform;
             _pt.target = tracker.transform;
+
+            _navigation = gameObject.AddComponent<NavigationComponent>();
         }
 
         private void OnDestroy()
@@ -80,39 +94,122 @@ namespace Controllers
 
         /// <summary> Прибытие в точку. </summary>
         /// <param name="target"> Координаты точки. </param>
-        public void Arrival(Vector3 target, float speed = 0f, bool Warp = false)
+        public void Arrival(Vector3 target, bool Warp = false, bool Navigate = true, bool canMoveEndPoint = true, List<Mobile> fleet = null)
         {
             Status = State.Arriving;
 
-            float distance = (target - transform.position).magnitude;
-            if (distance > Owner.Threshold)
+            _navigation.isUsing = Navigate;
+            
+            if (Navigate)
             {
-                if (speed == 0)
+                if (canMoveEndPoint)
                 {
-                    if (!Warp)
+                    if (_navigation.positions.Count == 0 || !_navigation.StartPointUnavaible &&
+                        _navigation.positions[_navigation.positions.Count - 1] != target)
                     {
-                        engines.Move(target, engines.MaxSpeed);
-                    }
-                    else
-                    {
-                        engines.Warp(target, engines.MaxSpeed);
+                        _navigation.Navigate(target, true, fleet);
                     }
                 }
                 else
                 {
-                    if (!Warp)
+                    if (_navigation.positions.Count == 0 || _navigation.positions[_navigation.positions.Count - 1] != target)
                     {
-                        engines.Move(target, speed);
+                        _navigation.Navigate(target, false, fleet);
+                    }
+                }
+
+                if(_navigation.isNavigating)return;
+                float distance = (_navigation.positions[0] - transform.position).magnitude;
+                if (_navigation.positions.Count == 1)
+                {
+                    if (distance > Owner.Threshold)
+                    {
+                        if (fleet == null)
+                        {
+                            if (!Warp)
+                            {
+                                engines.Move(_navigation.positions[0], engines.MaxSpeed);
+                            }
+                            else
+                            {
+                                engines.Warp(_navigation.positions[0], engines.MaxSpeed);
+                            }
+                        }
+                        else
+                        {
+                            if (!Warp)
+                            {
+                                engines.Move(_navigation.positions[0], minFleetImpulseSpeed(fleet));
+                            }
+                            else
+                            {
+                                engines.Warp(_navigation.positions[0], minFleetImpulseSpeed(fleet), minFleetWarpSpeed(fleet), fleet);
+                            }
+                        }
+                    }
+                }
+
+                if (_navigation.positions.Count > 1)
+                {
+                    if (distance > Owner.Threshold+engines.DistanceToFullStop(engines.Acceleration))
+                    {
+                        if (fleet == null)
+                        {
+                            if (!Warp)
+                            {
+                                engines.Move(_navigation.positions[0], engines.MaxSpeed);
+                            }
+                            else
+                            {
+                                engines.Warp(_navigation.positions[0], engines.MaxSpeed);
+                            }
+                        }
+                        else
+                        {
+                            if (!Warp)
+                            {
+                                engines.Move(_navigation.positions[0], minFleetImpulseSpeed(fleet));
+                            }
+                            else
+                            {
+                                engines.Warp(_navigation.positions[0], minFleetImpulseSpeed(fleet), minFleetWarpSpeed(fleet), fleet);
+                            }
+                        }
                     }
                     else
                     {
-                        engines.Warp(target, speed);
+                        _navigation.positions.RemoveAt(0);
                     }
                 }
             }
             else
             {
-                Stop();
+                float distance = (target - transform.position).magnitude;
+                if (distance > Owner.Threshold)
+                {
+                    if (fleet == null)
+                    {
+                        if (!Warp)
+                        {
+                            engines.Move(target, engines.MaxSpeed);
+                        }
+                        else
+                        {
+                            engines.Warp(target, engines.MaxSpeed);
+                        }
+                    }
+                    else
+                    {
+                        if (!Warp)
+                        {
+                            engines.Move(target, minFleetImpulseSpeed(fleet));
+                        }
+                        else
+                        {
+                            engines.Warp(target, minFleetImpulseSpeed(fleet), minFleetWarpSpeed(fleet), fleet);
+                        }
+                    }
+                }
             }
         }
 
@@ -193,19 +290,19 @@ namespace Controllers
             Status = State.LeaderFollowing;
         }
 
-        /// <summary> Движение во флоте. </summary>
-        public void FleetMovement(Vector3 targetPosition, List<Mobile> fleet, bool Warp = false)
+        public void AttaсkWithPattern(AttackingPattern pattern, SelectableObject target, GunnerController gunner, float speed = 0f)
         {
-            Status = State.MovingInFleet;
-            
-            float minSpeed = fleet.Select(shipGO => shipGO.GetComponent<Engines>()).Min(moveComp => moveComp.MaxSpeed);
-            if (!Warp)
+            switch (pattern)
             {
-                engines.Move(targetPosition, minSpeed);
-            }
-            else
-            {
-                engines.Warp(targetPosition, minSpeed);
+                case AttackingPattern.Alpha:
+                    AttaсkAlpha(target, gunner, speed);
+                    break;
+                case AttackingPattern.Beta:
+                    AttackBeta(target, gunner, speed);
+                    break;
+                case AttackingPattern.Gamma:
+                    AttackGamma(target, gunner, speed);
+                    break;
             }
         }
 

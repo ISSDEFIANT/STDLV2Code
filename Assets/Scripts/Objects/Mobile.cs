@@ -33,6 +33,8 @@ public class Mobile : SelectableObject
         moveComponent.Owner = this;
         
         TimelyFleet = new List<Mobile>();
+
+        GlobalMinimapRender = GlobalMinimapMark.ShowingStats.Ship;
     }
 
     /// <summary> Включение модулей. </summary>

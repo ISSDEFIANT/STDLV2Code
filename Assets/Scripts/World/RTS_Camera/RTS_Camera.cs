@@ -31,11 +31,25 @@ namespace RTS_Cam
         #region Movement
 
         public float keyboardMovementSpeed = 5f; //speed with keyboard movement
-        public float screenEdgeMovementSpeed = 3f; //spee with screen edge movement
+        public float screenEdgeMovementSpeed = 3f; //speed with screen edge movement
+        public float screenEdgeMovementSpeedMin = 3f;
+        public float screenEdgeMovementSpeedMax = 100f;
+        public CameraZoom zoomScript;
+        
         public float followingSpeed = 5f; //speed when following a target
         public float rotationSped = 3f;
         public float panningSpeed = 10f;
         public float mouseRotationSpeed = 10f;
+
+        #endregion
+        
+        #region Rotation
+        
+        public SgtMouseLook alternativeRotationScript;
+        public bool followRotation;
+        public bool followRotationX;
+        public bool followRotationY;
+        public bool followRotationZ;
 
         #endregion
 
@@ -205,6 +219,11 @@ namespace RTS_Cam
         /// </summary>
         private void Move()
         {
+            if (alternativeRotationScript != null && Input.GetKey(alternativeRotationScript.Require))
+            {
+                return;
+            }
+            
             if (useKeyboardInput)
             {
                 Vector3 desiredMove = new Vector3(KeyboardInput.x, 0, KeyboardInput.y);
@@ -229,7 +248,17 @@ namespace RTS_Cam
                 desiredMove.x = leftRect.Contains(MouseInput) ? -1 : rightRect.Contains(MouseInput) ? 1 : 0;
                 desiredMove.z = upRect.Contains(MouseInput) ? 1 : downRect.Contains(MouseInput) ? -1 : 0;
 
-                desiredMove *= screenEdgeMovementSpeed;
+                if (zoomScript == null)
+                {
+                    desiredMove *= screenEdgeMovementSpeed;
+                }
+                else
+                {
+                    desiredMove *= Mathf.Lerp(screenEdgeMovementSpeedMin,
+                        screenEdgeMovementSpeedMax,
+                        zoomScript.transform.localPosition.z / zoomScript.maxHeight);
+                }
+
                 desiredMove *= Time.deltaTime;
                 desiredMove = Quaternion.Euler(new Vector3(0f, transform.eulerAngles.y, 0f)) * desiredMove;
                 desiredMove = m_Transform.InverseTransformDirection(desiredMove);
@@ -284,6 +313,37 @@ namespace RTS_Cam
             if (useMouseRotation && Input.GetKey(mouseRotationKey))
             {
                 m_Transform.Rotate(Vector3.up, -MouseAxis.x * Time.deltaTime * mouseRotationSpeed, Space.World);
+            }
+
+            if (followRotation && targetFollow != null)
+            {
+                Vector3 newRot = new Vector3(0,0,0);
+                if (followRotationX)
+                {
+                    newRot.x = targetFollow.rotation.eulerAngles.x;
+                }
+                else
+                {
+                    newRot.x = m_Transform.rotation.eulerAngles.x;
+                }
+                if (followRotationY)
+                {
+                    newRot.y = targetFollow.rotation.eulerAngles.y;
+                }
+                else
+                {
+                    newRot.y = m_Transform.rotation.eulerAngles.y;
+                }
+                if (followRotationZ)
+                {
+                    newRot.z = targetFollow.rotation.eulerAngles.z;
+                }
+                else
+                {
+                    newRot.z = m_Transform.rotation.eulerAngles.z;
+                }
+
+                m_Transform.eulerAngles = new Vector3(newRot.x % 360f, newRot.y % 360f, newRot.z % 360f);
             }
         }
 

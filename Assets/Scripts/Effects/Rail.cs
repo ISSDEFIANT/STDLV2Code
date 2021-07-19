@@ -86,11 +86,13 @@ public class Rail : MonoBehaviour
         return Quaternion.Lerp(p1, p2, ratio);
     }
     // Update is called once per frame
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         for (int i = 0; i < nodes.Length-1; i++)
         {
-            Handles.DrawDottedLine(nodes[i].position,nodes[i+1].position, 3.0f);
+            Handles.DrawDottedLine(nodes[i].position, nodes[i + 1].position, 3.0f);
         }
     }
+#endif
 }

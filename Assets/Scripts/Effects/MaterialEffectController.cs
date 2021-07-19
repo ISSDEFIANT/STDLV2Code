@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Renderer))]
 public class MaterialEffectController : MonoBehaviour
 {
-    private SelectableObject _so;
+    public SelectableObject _so = null;
     [HideInInspector] public Renderer _or;
 
     public int BorgIndex = 0;
@@ -18,22 +18,32 @@ public class MaterialEffectController : MonoBehaviour
 
     public bool Deactivate;
 
+    public List<MaterialEffectController> SubParts;
+
     // Start is called before the first frame update
     void Start()
     {
-        _so = GetComponentInParent<SelectableObject>();
+        _so = transform.root.gameObject.GetComponent<SelectableObject>();
 
         _or = GetComponent<Renderer>();
 
-        if (Deactivate) this.enabled = false;
+        if (Deactivate)
+        {
+            this.enabled = false;
+            return;
+        }
         
-        borgMat = (Material) Resources.Load("Effects/Borg/BorgEffect");
-        damageLMat = (Material) Resources.Load("Effects/DamageAndDestructions/DamageEffect/Hull/Light/DamageEffect");
-        damageHMat = (Material) Resources.Load("Effects/DamageAndDestructions/DamageEffect/Hull/Heavy/DamageEffect");
+        borgMat = (Material) DataLoader.Instance.ResourcesCache["AssimilationMaterial"];
+        damageLMat = (Material) DataLoader.Instance.ResourcesCache["LightDamageMaterial"];
+        damageHMat = (Material) DataLoader.Instance.ResourcesCache["HeavyDamageMaterial"];
+        
+        UpdateBorgMat();
+        UpdateDamageMat();
     }
 
     public void UpdateBorgMat()
     {
+        if (Deactivate) return;
         if (_so.Assimilated)
         {
             if (BorgIndex == 0)
@@ -48,10 +58,19 @@ public class MaterialEffectController : MonoBehaviour
                 removeBorgMaterial();
             }
         }
+        if (SubParts.Count > 0)
+        {
+            foreach (MaterialEffectController mat in SubParts)
+            {
+                if (mat._so == null) mat._so = _so;
+                mat.UpdateBorgMat();
+            }
+        }
     }
 
     public void UpdateDamageMat()
     {
+        if (Deactivate) return;
         if (_so.healthSystem)
         {
             if (_so._hs.curHull > _so._hs.MaxHull / 1.5)
@@ -84,10 +103,19 @@ public class MaterialEffectController : MonoBehaviour
                 }
             }
         }
+        if (SubParts.Count > 0)
+        {
+            foreach (MaterialEffectController mat in SubParts)
+            {
+                if (mat._so == null) mat._so = _so;
+                mat.UpdateDamageMat();
+            }
+        }
     }
 
     void addBorgMaterial()
     {
+        if (Deactivate) return;
         List<Material> mats = _or.materials.ToList();
 
         Vector2 vec = new Vector2(Random.Range(0f, 100f), Random.Range(0f, 100f));
@@ -101,7 +129,7 @@ public class MaterialEffectController : MonoBehaviour
 
     void removeBorgMaterial()
     {
-
+        if (Deactivate) return;
         List<Material> mats = _or.materials.ToList();
         mats.RemoveAt(BorgIndex);
         _or.materials = mats.ToArray();
@@ -111,6 +139,7 @@ public class MaterialEffectController : MonoBehaviour
 
     void addDamageMaterial(Material dm, bool change = false)
     {
+        if (Deactivate) return;
         Vector2 vec;
         if (change)
         {
@@ -136,6 +165,7 @@ public class MaterialEffectController : MonoBehaviour
 
     void removeDamageMaterial()
     {
+        if (Deactivate) return;
         List<Material> mats = _or.materials.ToList();
         mats.RemoveAt(DamageIndex);
         _or.materials = mats.ToArray();

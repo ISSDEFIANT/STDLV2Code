@@ -22,7 +22,7 @@ public class PatrolVisual : MonoBehaviour {
 	// Update is called once per frame
 	void Update()
 	{
-		if (!player.LockOnPatrolSetting)
+		if (!player.ShiftPatrolSetting && player.CameraState != STMethods.PlayerCameraState.PatrolSetting)
 		{
 			if (player.SelectionList.Count == 1 && (player.SelectionList[0] is Mobile))
 			{
