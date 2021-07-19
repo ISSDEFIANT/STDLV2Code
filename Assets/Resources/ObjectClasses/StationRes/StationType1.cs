@@ -42,6 +42,6 @@ public class StationType1 : Static
     /// <summary> Инициализация щитов. </summary>
     protected void initShilds(int count, GameObject ShildObject, HealthSystem _hs, float shildForce, float shieldDelay, float shieldDivider)
     {
-        _hs.Shilds = Enumerable.Range(0,count).Select(x=>ShildObject.AddComponent<NormalRaceShield>().InitShield(shieldDelay,shieldDivider,shildForce)).ToArray();
+        _hs.Shilds = Enumerable.Range(0,count).Select(x=>ShildObject.AddComponent<NormalRaceShield>().InitShield(shieldDelay,shieldDivider,shildForce, this)).ToArray();
     }
 }

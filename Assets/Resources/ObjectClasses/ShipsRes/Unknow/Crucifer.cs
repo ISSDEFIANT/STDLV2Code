@@ -10,6 +10,9 @@ public class Crucifer : ShipType1
     {
         base.Awake();
 
+        ObjectName = "SS Crucifer";
+        ObjectClass = "Sovereign class";
+
         AttackProbability.AlphaProbability = 0.5f;
         AttackProbability.BetaProbability = 0.75f;
         AttackProbability.GammaProbability = 1;
@@ -45,13 +48,19 @@ public class Crucifer : ShipType1
         initShilds(2,ShildsObj,_hs,1000,180,100);
         
         FindInmodelElements();
+        
+        Threshold = 3f;        
 
         moveComponent.Model = model.transform;
-        moveComponent.MaxSpeed = 13;
+        moveComponent.MaxSpeed = 15;
         moveComponent.Acceleration = 5;
+        moveComponent.WarpBlink = (GameObject)Resources.Load("Effects/Warp/FedWarpEffect");
+        moveComponent.BorgWarpBlink = (GameObject)Resources.Load("Effects/Warp/BorgWarpEffect");
         
         Captain = gameObject.AddComponent<Captain>();
         Captain.Owner = this;
         Captain.Sensors = _ss as SensorSS;
+        
+        rigitBody.mass = 3205000;
     }
 }
